@@ -64,7 +64,9 @@ class AutoCompleteCustom extends StatelessWidget {
               ),
               labelText: "Tìm kiếm",
               labelStyle: TextStyle(
-                  color: Colors.red, fontSize: TextSize().getLabelTextSize()),
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                  fontSize: TextSize().getLabelTextSize()),
               prefixIcon: Icon(
                 Icons.search,
                 size: sizeButtonAppBar,
@@ -97,7 +99,7 @@ class AutoCompleteCustom extends StatelessWidget {
                 controller: textEditingController,
                 focusNode: focusNode,
                 onFieldSubmitted: (String value) {
-                  onFieldSubmitted();
+                  // onFieldSubmitted();
                 },
               );
             },
@@ -110,6 +112,7 @@ class AutoCompleteCustom extends StatelessWidget {
                       child: SizedBox(
                         width: 300,
                         height: 300,
+                        // height: 300,
                         child: ListView.builder(
                           padding: const EdgeInsets.all(8.0),
                           itemCount: options.length,

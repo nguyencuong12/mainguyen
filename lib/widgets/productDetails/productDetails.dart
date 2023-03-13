@@ -42,7 +42,13 @@ class _ProductDetailsState extends State<ProductDetails> {
             backButton: true,
             title: Text("Chi tiết sản phẩm",
                 style: TextStyle(fontSize: TextSize().getLabelTextSize())),
-            widgetActions: []),
+            widgetActions: [
+              IconButton(
+                  onPressed: () {
+                    print("AA");
+                  },
+                  icon: Icon(Icons.edit))
+            ]),
         body: BodyWidget(
             bodyWidget: Column(
           children: [
