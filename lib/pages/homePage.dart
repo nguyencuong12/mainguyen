@@ -1,12 +1,17 @@
 // ignore: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/pages/createGuest.dart';
+import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
 import 'package:mainguyen/pages/productBought.dart';
+import 'package:mainguyen/pages/sell.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/sizeAppbarButton.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/autocomplete.dart';
 import '../utils/screenSize.dart';
 
@@ -17,6 +22,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const List<String> _options = <String>[
+    'aardvark',
+    'bobcat',
+    'chameleon',
+  ];
   InkWell renderProductBox(String title, String image, Function callback) {
     return InkWell(
       onTap: () {
@@ -62,7 +72,10 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             padding: EdgeInsets.only(top: 20),
             child: CustomAppBar(
-              title: const AutoCompleteCustom(),
+              title: AutocompleteField(
+                options: _options,
+                label: "11",
+              ),
               backButton: false,
               widgetActions: [],
             ),
@@ -71,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         primary: false,
         padding: const EdgeInsets.all(20),
         crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        mainAxisSpacing: 20,
         crossAxisCount: 2,
         children: <Widget>[
           renderProductBox(
@@ -85,11 +98,32 @@ class _HomePageState extends State<HomePage> {
                     )
                   }),
           renderProductBox(
-              "Tạo đơn bán hàng", "assets/appIcons/sell.png", () => {}),
+              "Tạo đơn bán hàng",
+              "assets/appIcons/sell.png",
+              () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SaleProducts()),
+                    )
+                  }),
           renderProductBox(
               "Nhập hàng", "assets/appIcons/import.png", () => {}),
           renderProductBox(
-              "Vận chuyển", "assets/appIcons/delivery.png", () => {}),
+              "Vận chuyển",
+              "assets/appIcons/delivery.png",
+              () async =>
+                  {await FlutterPhoneDirectCaller.callNumber("0978531164")}),
+          renderProductBox(
+              "Thêm khách hàng ",
+              "assets/appIcons/user.png",
+              () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CreateGuest()),
+                    )
+                  }),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -161,15 +195,97 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Icon(Icons.safety_check_outlined),
-                              Text("Setting 1")
+                              Icon(Icons.subject),
+                              Text("Danh mục")
                             ],
                           ),
-                          onPressed: () => {}),
+                          onPressed: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const MenuPage()),
+                                )
+                              }),
                     ],
                   ),
                 ],
               ))),
     );
+  }
+}
+
+class AutocompleteField extends StatelessWidget {
+  AutocompleteField(
+      {super.key, required List<String> options, required this.label})
+      : _options = options;
+
+  final List<String> _options;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: 80,
+        child: InputDecorator(
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                label: Text(label),
+                filled: true,
+                fillColor: Colors.white,
+                prefix: Icon(
+                  Icons.search,
+                  color: Colors.black,
+                )),
+            child: RawAutocomplete<String>(
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                return _options.where((String option) {
+                  return option.contains(textEditingValue.text.toLowerCase());
+                });
+              },
+              fieldViewBuilder: (BuildContext context,
+                  TextEditingController textEditingController,
+                  FocusNode focusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextFormField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(border: InputBorder.none),
+                  onFieldSubmitted: (String value) {
+                    onFieldSubmitted();
+                  },
+                );
+              },
+              onSelected: (option) => {},
+              optionsViewBuilder: (BuildContext context,
+                  AutocompleteOnSelected<String> onSelected,
+                  Iterable<String> options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4.0,
+                    child: SizedBox(
+                      height: 200.0,
+                      width: 350,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final String option = options.elementAt(index);
+                          return GestureDetector(
+                            onTap: () {
+                              onSelected(option);
+                              UtilsFunction().closeKeyboard();
+                            },
+                            child: ListTile(
+                              title: Text(option),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )));
   }
 }

@@ -200,7 +200,7 @@ class _NewProductState extends State<NewProduct> {
                           ),
                           onPressed: () {},
                           icon: const Icon(
-                            Icons.done,
+                            Icons.close,
                             size: 24.0,
                           ),
 
