@@ -7,6 +7,7 @@ import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/pages/allProduct.dart';
 import 'package:mainguyen/pages/createGuest.dart';
+import 'package:mainguyen/pages/inputProduct.dart';
 import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
 import 'package:mainguyen/pages/productBought.dart';
@@ -135,7 +136,15 @@ class _HomePageState extends State<HomePage> {
                         )
                       }),
               renderProductBox(
-                  "Nhập hàng", "assets/appIcons/import.png", () => {}),
+                  "Nhập hàng",
+                  "assets/appIcons/import.png",
+                  () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const InputProduct()),
+                        )
+                      }),
               renderProductBox(
                   "Vận chuyển",
                   "assets/appIcons/delivery.png",

@@ -311,9 +311,6 @@ class _NewProductState extends State<NewProduct> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () async {
-                            var box = await Hive.openBox("product");
-                            box.clear();
-                            print("BOX length ${box.length}");
                             Navigator.pop(context);
                             // box.length;
                             // Product b = box.getAt(0);
