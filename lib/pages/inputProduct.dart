@@ -42,13 +42,12 @@ class _InputProductState extends State<InputProduct> {
 
   Future _openBox() async {
     _productBox = await Hive.openBox('product');
-    print("LENGTH ${_productBox.length}");
-    _productBox.length;
+
     _options = [];
     for (var i = 0; i < _productBox.length; i++) {
       _options.add(_productBox.getAt(i));
     }
-    print("OPTION $_options");
+
     setState(() {});
     return;
   }
