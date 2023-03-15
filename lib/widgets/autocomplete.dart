@@ -120,14 +120,14 @@ class AutoCompleteCustom extends StatelessWidget {
                             User option = options.elementAt(index);
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const ProductDetails()),
-                                );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) =>
+                                //           const ProductDetails()),
+                                // );
                                 UtilsFunction().closeKeyboard();
-                                // onSelected(option);
+                                onSelected(option);
                               },
                               child: Card(
                                 child: ListTile(

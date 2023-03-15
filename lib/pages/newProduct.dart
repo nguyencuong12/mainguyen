@@ -1,12 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/classes/product/product.dart';
+import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:selection_menu/selection_menu.dart';
+import 'package:selection_menu/components_configurations.dart';
+import 'package:uuid/uuid.dart';
+
+import '../enum/product/productEnum.dart';
 
 class NewProduct extends StatefulWidget {
   const NewProduct({Key? key}) : super(key: key);
@@ -18,13 +28,14 @@ class NewProduct extends StatefulWidget {
 class _NewProductState extends State<NewProduct> {
   XFile? image;
   final ImagePicker picker = ImagePicker();
+  ProductClass product = ProductClass()..type = ProductEnum.kg;
+  late Uint8List _imageMemory = Uint8List(0);
 
   Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
-
-    setState(() {
-      image = img;
-    });
+    image = img;
+    _imageMemory = (await image?.readAsBytes())!;
+    setState(() {});
   }
 
   @override
@@ -36,6 +47,51 @@ class _NewProductState extends State<NewProduct> {
       endIndent: 0,
       color: Color.fromARGB(255, 175, 170, 170),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void handleSubmit() async {
+    var box = await Hive.openBox('product');
+    var productCreate = Product(
+        date: DateTime.now(),
+        id: const Uuid().v4(),
+        distributor: product.distributor!,
+        productName: product.productName!,
+        price: product.price!,
+        amount: product.amount!,
+        location: product.location!,
+        type: getType(product.type!),
+        imageProduct: _imageMemory);
+    box.add(productCreate);
+    Navigator.pop(context);
+  }
+
+  ProductEnumHive getType(ProductEnum type) {
+    switch (type) {
+      case ProductEnum.kg:
+        return ProductEnumHive.kg;
+      case ProductEnum.tree:
+        return ProductEnumHive.tree;
+      case ProductEnum.bag:
+        return ProductEnumHive.bag;
+    }
+  }
+
+  handleEnableSubmit() {
+    if (product.type != null &&
+        product.productName != null &&
+        product.distributor != null &&
+        product.amount != null &&
+        product.price != null &&
+        product.location != null) {
+      return handleSubmit;
+    } else {
+      return null;
+    }
   }
 
   Widget build(BuildContext context) {
@@ -113,64 +169,117 @@ class _NewProductState extends State<NewProduct> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: Image.file(
-                                //to show image, you type like this.
-                                File(image!.path),
-                                fit: BoxFit.cover,
-                                width: MediaQuery.of(context).size.width,
-                                height: 200,
-                              ),
+                              child: Image.memory(_imageMemory,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  height: 200,
+                                  fit: BoxFit.cover),
                             ),
                           )
                         : Text(""),
-                    const Padding(
+                    Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       child: TextField(
-                        decoration: InputDecoration(
+                        onSubmitted: (distributor) {
+                          setState(() {
+                            product.distributor = distributor;
+                          });
+                        },
+                        decoration: const InputDecoration(
                           label: Text("Tên người cung cấp hàng"),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    const Padding(
+                    Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       child: TextField(
-                        decoration: InputDecoration(
+                        onSubmitted: (productName) {
+                          setState(() {
+                            product.productName = productName;
+                          });
+                        },
+                        decoration: const InputDecoration(
                           label: Text("Tên sản phẩm"),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    const Padding(
+                    SelectionMenu<String>(
+                      itemsList: <String>['KG', 'CÂY', 'BAO'],
+                      onItemSelected: (String selectedItem) {
+                        switch (selectedItem) {
+                          case "KG":
+                            {
+                              product.type = ProductEnum.kg;
+                              break;
+                            }
+                          case "CÂY":
+                            {
+                              product.type = ProductEnum.tree;
+                              break;
+                            }
+                          case "BAO":
+                            {
+                              product.type = ProductEnum.bag;
+                              break;
+                            }
+                        }
+                        setState(() {});
+                      },
+                      itemBuilder: itemBuildSelection,
+                      showSelectedItemAsTrigger: true,
+                      initiallySelectedItemIndex: 0,
+                      closeMenuInsteadOfPop: true,
+                      closeMenuOnEmptyMenuSpaceTap: false,
+                      closeMenuWhenTappedOutside: true,
+                      closeMenuOnItemSelected: true,
+                      allowMenuToCloseBeforeOpenCompletes: true,
+                    ),
+                    Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       child: TextField(
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          label: Text("Giá nhập"),
+                        onSubmitted: (price) {
+                          setState(() {
+                            product.price = int.parse(price);
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          label: Text("Giá sản phẩm"),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    const Padding(
+                    Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       child: TextField(
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          label: Text("Số lượng"),
+                        onSubmitted: (amount) {
+                          setState(() {
+                            product.amount = double.parse(amount);
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          label: Text("Số lượng"),
                           border: OutlineInputBorder(),
                         ),
                       ),
                     ),
-                    const Padding(
+                    Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                       child: TextField(
-                        decoration: InputDecoration(
-                          label: Text("Vị trí đặt trong kho"),
+                        onSubmitted: (location) {
+                          setState(() {
+                            product.location = location;
+                          });
+                        },
+                        decoration: const InputDecoration(
+                          label: Text("Vị trí đặt trong kho"),
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -183,14 +292,17 @@ class _NewProductState extends State<NewProduct> {
                             primary: Colors.green, // background
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed: () {},
+                          // onPressed: () async {
+                          //   handleSubmit();
+                          // },
+                          onPressed: handleEnableSubmit(),
                           icon: const Icon(
                             Icons.done,
                             size: 24.0,
                           ),
                           label: Text('Hoàn thành'), // <-- Text
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         ElevatedButton.icon(
@@ -198,7 +310,19 @@ class _NewProductState extends State<NewProduct> {
                             primary: Colors.red, // background
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            var box = await Hive.openBox("product");
+                            box.clear();
+                            print("BOX length ${box.length}");
+                            Navigator.pop(context);
+                            // box.length;
+                            // Product b = box.getAt(0);
+                            // print("IMAGE ${b.imageProduct}");
+                            // a.clear();
+                            // print("LENGTH ${a.length}");
+                            // Product b = a.getAt(0);
+                            // print("B ${b.location}");
+                          },
                           icon: const Icon(
                             Icons.close,
                             size: 24.0,
@@ -210,5 +334,46 @@ class _NewProductState extends State<NewProduct> {
                     )
                   ],
                 ))));
+  }
+
+  Widget itemBuildSelection(
+      BuildContext context, String item, OnItemTapped onItemTapped) {
+    return Material(
+      color: Colors.white,
+      child: InkWell(
+        onTap: onItemTapped,
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              ClipOval(
+                child: Container(
+                  color: Color(0xff4db151),
+                  height: 30,
+                  width: 30,
+                ),
+              ),
+              getDivider(),
+              const Flexible(
+                fit: FlexFit.tight,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Loại",
+                    // style: textStyle,
+                  ),
+                ),
+              ),
+              Text(
+                "$item",
+                // style: textStyle,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

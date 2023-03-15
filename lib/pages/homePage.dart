@@ -2,7 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/models/product/product.dart';
+import 'package:mainguyen/pages/allProduct.dart';
 import 'package:mainguyen/pages/createGuest.dart';
 import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
@@ -13,6 +16,8 @@ import 'package:mainguyen/utils/sizeAppbarButton.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/autocomplete.dart';
+import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/productDetails/productDetails.dart';
 import '../utils/screenSize.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,11 +27,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const List<String> _options = <String>[
-    'aardvark',
-    'bobcat',
-    'chameleon',
-  ];
+  late List<Product> _options = [];
+  late Box _productBox;
+
+  @override
+  void initState() {
+    super.initState();
+    _openBox();
+  }
+
+  Future _openBox() async {
+    _productBox = await Hive.openBox('product');
+    _options = [];
+    for (var i = 0; i < _productBox.length; i++) {
+      _options.add(_productBox.getAt(i));
+    }
+
+    setState(() {});
+    return;
+  }
+
   InkWell renderProductBox(String title, String image, Function callback) {
     return InkWell(
       onTap: () {
@@ -80,58 +100,82 @@ class _HomePageState extends State<HomePage> {
               widgetActions: [],
             ),
           )),
-      body: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 20,
-        crossAxisCount: 2,
-        children: <Widget>[
-          renderProductBox(
-              "Thêm hàng mới ",
-              "assets/appIcons/cart.png",
-              () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NewProduct()),
-                    )
-                  }),
-          renderProductBox(
-              "Tạo đơn bán hàng",
-              "assets/appIcons/sell.png",
-              () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SaleProducts()),
-                    )
-                  }),
-          renderProductBox(
-              "Nhập hàng", "assets/appIcons/import.png", () => {}),
-          renderProductBox(
-              "Vận chuyển",
-              "assets/appIcons/delivery.png",
-              () async =>
-                  {await FlutterPhoneDirectCaller.callNumber("0978531164")}),
-          renderProductBox(
-              "Thêm khách hàng ",
-              "assets/appIcons/user.png",
-              () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const CreateGuest()),
-                    )
-                  }),
-        ],
+      body: BodyWidget(
+        bodyWidget: Container(
+          width: screenSizeWithoutContext.width,
+          height: screenSizeWithoutContext.height / 3,
+          child: GridView.count(
+            primary: false,
+            padding: const EdgeInsets.all(20),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 20,
+            crossAxisCount: 2,
+            children: <Widget>[
+              renderProductBox(
+                  "Thêm hàng mới ",
+                  "assets/appIcons/cart.png",
+                  () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const NewProduct()),
+                        ).then((value) async {
+                          print("CALL");
+                          await _openBox();
+                        })
+                      }),
+              renderProductBox(
+                  "Tạo đơn bán hàng",
+                  "assets/appIcons/sell.png",
+                  () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SaleProducts()),
+                        )
+                      }),
+              renderProductBox(
+                  "Nhập hàng", "assets/appIcons/import.png", () => {}),
+              renderProductBox(
+                  "Vận chuyển",
+                  "assets/appIcons/delivery.png",
+                  () async => {
+                        await FlutterPhoneDirectCaller.callNumber("0978531164")
+                      }),
+              renderProductBox(
+                  "Thêm khách hàng ",
+                  "assets/appIcons/user.png",
+                  () => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const CreateGuest()),
+                        )
+                      }),
+              renderProductBox(
+                  "Tất cả hàng trong kho",
+                  "assets/appIcons/package.png",
+                  () async => {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AllProducts()),
+                        )
+                      }),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorsInApp().getPrimaryColor(),
         child: Icon(
           Icons.add,
         ),
-        onPressed: () => {},
+        onPressed: () => {
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const NewProduct()))
+              .then((value) async => await _openBox())
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -215,11 +259,13 @@ class _HomePageState extends State<HomePage> {
 }
 
 class AutocompleteField extends StatelessWidget {
-  AutocompleteField(
-      {super.key, required List<String> options, required this.label})
-      : _options = options;
+  AutocompleteField({
+    super.key,
+    required List<Product> options,
+    required this.label,
+  }) : _options = options;
 
-  final List<String> _options;
+  final List<Product> _options;
   final String label;
 
   @override
@@ -232,14 +278,15 @@ class AutocompleteField extends StatelessWidget {
                 label: Text(label),
                 filled: true,
                 fillColor: Colors.white,
-                prefix: Icon(
+                prefix: const Icon(
                   Icons.search,
                   color: Colors.black,
                 )),
-            child: RawAutocomplete<String>(
+            child: RawAutocomplete<Product>(
               optionsBuilder: (TextEditingValue textEditingValue) {
-                return _options.where((String option) {
-                  return option.contains(textEditingValue.text.toLowerCase());
+                return _options.where((Product product) {
+                  return product.productName
+                      .contains(textEditingValue.text.toLowerCase());
                 });
               },
               fieldViewBuilder: (BuildContext context,
@@ -257,29 +304,56 @@ class AutocompleteField extends StatelessWidget {
               },
               onSelected: (option) => {},
               optionsViewBuilder: (BuildContext context,
-                  AutocompleteOnSelected<String> onSelected,
-                  Iterable<String> options) {
+                  AutocompleteOnSelected<Product> onSelected,
+                  Iterable<Product> options) {
                 return Align(
                   alignment: Alignment.topLeft,
                   child: Material(
                     elevation: 4.0,
-                    child: SizedBox(
+                    child: Container(
                       height: 200.0,
                       width: 350,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)),
                       child: ListView.builder(
                         padding: const EdgeInsets.all(8.0),
                         itemCount: options.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final String option = options.elementAt(index);
+                          final Product product = options.elementAt(index);
                           return GestureDetector(
-                            onTap: () {
-                              onSelected(option);
-                              UtilsFunction().closeKeyboard();
-                            },
-                            child: ListTile(
-                              title: Text(option),
-                            ),
-                          );
+                              onTap: () {
+                                // onSelected(option);
+                                UtilsFunction().closeKeyboard();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ProductDetails(product: product)),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Card(
+                                  child: ListTile(
+                                    subtitle: Text(
+                                        "Vị trí: ${product.location}",
+                                        style: const TextStyle(fontSize: 12)),
+                                    leading: Image(
+                                        height: 50,
+                                        image:
+                                            MemoryImage(product.imageProduct)),
+                                    title: Text(
+                                      "Sản phẩm: ${product.productName}",
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                              )
+
+                              // ListTile(
+                              //   title: Text(option.productName),
+                              // ),
+                              );
                         },
                       ),
                     ),
