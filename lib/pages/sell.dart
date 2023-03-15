@@ -83,7 +83,7 @@ class _SaleProductsState extends State<SaleProducts> {
   }
 
   DataRow renderDataRow(Product product) {
-    var num = 10;
+    var num = 0;
     return DataRow(cells: [
       DataCell(
         Container(
@@ -99,47 +99,58 @@ class _SaleProductsState extends State<SaleProducts> {
         ),
       ),
       DataCell(Text(product.productName, style: TextStyle(fontSize: 10))),
-      DataCell(Flex(
-        direction: Axis.horizontal,
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.blue,
-            radius: 8,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(
-                Icons.remove,
-                size: 10,
-              ),
-              color: Colors.white,
-              onPressed: () {},
-            ),
+      DataCell(TextFormField(
+              initialValue: num.toString(),
+              onChanged: (value) => {},
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  suffix: Text("(${renderType(product.type)})",
+                      style: TextStyle(color: Colors.blue))),
+              keyboardType: TextInputType.number,
+              maxLines: null,
+              style: TextStyle(fontSize: 12, color: Colors.blue))
+          //   Flex(
+          //   direction: Axis.horizontal,
+          //   children: [
+          //     CircleAvatar(
+          //       backgroundColor: Colors.blue,
+          //       radius: 8,
+          //       child: IconButton(
+          //         padding: EdgeInsets.zero,
+          //         icon: const Icon(
+          //           Icons.remove,
+          //           size: 10,
+          //         ),
+          //         color: Colors.white,
+          //         onPressed: () {},
+          //       ),
+          //     ),
+          //     const SizedBox(width: 3),
+          //     CircleAvatar(
+          //         backgroundColor: Colors.white,
+          //         radius: 14,
+          //         child: Text("$num ${renderType(product.type)}",
+          //             style: TextStyle(fontSize: 10))),
+          //     const SizedBox(width: 3),
+          //     CircleAvatar(
+          //       backgroundColor: Colors.blue,
+          //       radius: 8,
+          //       child: IconButton(
+          //         padding: EdgeInsets.zero,
+          //         icon: const Icon(
+          //           Icons.add,
+          //           size: 10,
+          //         ),
+          //         color: Colors.white,
+          //         onPressed: () {
+          //           num += 1;
+          //           setState(() {});
+          //         },
+          //       ),
+          //     ),
+          //   ],
+          // )
           ),
-          const SizedBox(width: 3),
-          CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 14,
-              child: Text("$num ${renderType(product.type)}",
-                  style: TextStyle(fontSize: 10))),
-          const SizedBox(width: 3),
-          CircleAvatar(
-            backgroundColor: Colors.blue,
-            radius: 8,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(
-                Icons.add,
-                size: 10,
-              ),
-              color: Colors.white,
-              onPressed: () {
-                num += 1;
-                setState(() {});
-              },
-            ),
-          ),
-        ],
-      )),
       DataCell(Text(UtilsFunction().formatCurrency(product.price),
           style: const TextStyle(fontSize: 10, color: Colors.blue))),
       DataCell(IconButton(
