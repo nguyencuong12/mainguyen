@@ -1,18 +1,53 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/classes/guest/guestOrder.dart';
+import 'package:mainguyen/classes/sell/sellProductClass.dart';
+import 'package:mainguyen/models/product/product.dart';
+import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
+import 'package:mainguyen/pages/homePage.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:uuid/uuid.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
+
+import '../utils/utilsFunction.dart';
 
 class BillPage extends StatefulWidget {
-  const BillPage({super.key});
-
+  BillPage(
+      {super.key, required this.listProductOrder, required this.guestOrder});
+  List<SellProduct> listProductOrder;
+  GuestOrder guestOrder;
   @override
   State<BillPage> createState() => _BillPageState();
 }
 
 class _BillPageState extends State<BillPage> {
+  late Box _productBox;
+  late Box _soldOrdered;
+  late List<Product> _productsInDB = [];
+  WidgetsToImageController controller = WidgetsToImageController();
+  Uint8List? _imageBytes;
+
+  Future _openBox() async {
+    _productBox = await Hive.openBox('product');
+    for (var i = 0; i < _productBox.length; i++) {
+      _productsInDB.add(_productBox.getAt(i));
+    }
+    setState(() {});
+    return;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _openBox();
+  }
+
   Divider getDivider() {
     return const Divider(
       height: 30,
@@ -21,6 +56,64 @@ class _BillPageState extends State<BillPage> {
       endIndent: 0,
       color: Color.fromARGB(255, 175, 170, 170),
     );
+  }
+
+  renderType(ProductEnumHive type) {
+    switch (type) {
+      case ProductEnumHive.kg:
+        return "Kg";
+      case ProductEnumHive.tree:
+        return "Cây";
+      case ProductEnumHive.bag:
+        return "Bao";
+    }
+  }
+
+  double handleRenderTotal() {
+    double result = 0.0;
+    for (var productDB in _productsInDB) {
+      for (var productOrder in widget.listProductOrder) {
+        {
+          if (productDB.id == productOrder.id) {
+            result += productOrder.amount * productOrder.price;
+          }
+        }
+        ;
+      }
+    }
+
+    return result;
+  }
+
+  DataRow renderDataRow(SellProduct product) {
+    return DataRow(cells: [
+      DataCell(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            padding: const EdgeInsets.all(0),
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              onError: (exception, stackTrace) => {},
+              image: MemoryImage(product.image),
+              fit: BoxFit.contain,
+            )),
+          ),
+          SizedBox(width: 5),
+          Text(product.productName, style: TextStyle(fontSize: 10))
+        ],
+      )),
+      DataCell(Text(
+          "${product.amount.toString()} (${renderType(product.type)})",
+          style: TextStyle(fontSize: 10))),
+      DataCell(Text(UtilsFunction().formatCurrency(product.price),
+          style: const TextStyle(fontSize: 10, color: Colors.blue))),
+      DataCell(Text(
+          UtilsFunction().formatCurrency(product.price * product.amount),
+          style: const TextStyle(fontSize: 10, color: Colors.blue))),
+    ]);
   }
 
   @override
@@ -36,10 +129,11 @@ class _BillPageState extends State<BillPage> {
               width: screenSizeWithoutContext.width,
               child: Column(
                 children: [
-                  SizedBox(
+                  WidgetsToImage(
+                    controller: controller,
                     child: Column(
                       children: [
-                        Text("HÓA ĐƠN BÁN HÀNG ",
+                        const Text("HÓA ĐƠN BÁN HÀNG ",
                             style: TextStyle(
                                 color: Colors.green,
                                 fontSize: 18,
@@ -51,25 +145,36 @@ class _BillPageState extends State<BillPage> {
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600)),
                         const SizedBox(height: 5),
+                        Text(
+                            "Ngày bán hàng: ${UtilsFunction().formatDateTime(DateTime.now())}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12)),
                         getDivider(),
-                        const Text("Số điện thoại khách hàng : 0978531164",
+                        Text(
+                            "Tên khách hàng : ${widget.guestOrder.guestName ?? ""}",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 12)),
                         const SizedBox(height: 5),
-                        const Text(
-                            "Địa chỉ của khách hàng: 73 đường ĐHT 31 , phường Tân Hưng Thuận , Q12, TPHCM",
+                        Text(
+                            "Số điện thoại khách hàng : ${widget.guestOrder.phoneNumber ?? ""}",
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 12)),
+                        const SizedBox(height: 5),
+                        Text(
+                            "Địa chỉ của khách hàng: ${widget.guestOrder.address ?? ""}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12)),
+                        const SizedBox(height: 5),
                         getDivider(),
                         const SizedBox(height: 5),
                         SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: DataTable(
-                              horizontalMargin: 10,
+                              horizontalMargin: 0,
                               columns: const [
-                                DataColumn(
-                                    label: Text("Ảnh",
-                                        style: TextStyle(fontSize: 9))),
+                                // DataColumn(
+                                //     label: Text("Ảnh",
+                                //         style: TextStyle(fontSize: 9))),
                                 DataColumn(
                                     label: Text("Mục",
                                         style: TextStyle(fontSize: 9))),
@@ -84,62 +189,8 @@ class _BillPageState extends State<BillPage> {
                                         style: TextStyle(fontSize: 9))),
                               ],
                               rows: [
-                                DataRow(cells: [
-                                  DataCell(Text("1",
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                ]),
-                                DataRow(cells: [
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1',
-                                      style: TextStyle(fontSize: 10))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                  DataCell(Text('1000'.toVND(),
-                                      style: TextStyle(
-                                          fontSize: 10, color: Colors.blue))),
-                                ])
+                                ...widget.listProductOrder
+                                    .map((e) => renderDataRow(e))
                               ],
                             )),
                         SizedBox(height: 30),
@@ -147,26 +198,22 @@ class _BillPageState extends State<BillPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           direction: Axis.horizontal,
                           children: [
-                            Text("Tổng tiền đơn hàng: ",
-                                style: TextStyle(fontSize: 12)),
-                            Text("800000".toVND(),
-                                style: TextStyle(fontSize: 12))
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Flex(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          direction: Axis.horizontal,
-                          children: [
-                            Text("Tổng tiền thanh toán: ",
-                                style: TextStyle(fontSize: 13)),
-                            Text("800000".toVND(),
-                                style: TextStyle(fontSize: 13))
+                            const Text("Tổng tiền đơn hàng: ",
+                                style: TextStyle(fontSize: 14)),
+                            Text(
+                                UtilsFunction()
+                                    .formatCurrency(handleRenderTotal()),
+                                style: TextStyle(fontSize: 14))
                           ],
                         ),
                       ],
                     ),
                   ),
+                  // _imageBytes != null
+                  //     ? Image(
+                  //         image: MemoryImage(_imageBytes!),
+                  //       )
+                  //     : Text(""),
                   const SizedBox(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -176,7 +223,52 @@ class _BillPageState extends State<BillPage> {
                             primary: Colors.green, // background
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            _imageBytes = await controller.capture();
+                            for (var element in _productsInDB) {
+                              for (var order in widget.listProductOrder) {
+                                if (element.id == order.id) {
+                                  element.amount -= order.amount;
+                                }
+                              }
+                            }
+                            _soldOrdered = await Hive.openBox('soldOrdered');
+                            _soldOrdered.add(SoldOrderedModel(
+                                id: Uuid().v4(),
+                                image: _imageBytes!,
+                                guestOrder: widget.guestOrder.guestName!,
+                                guestAddress: widget.guestOrder.address,
+                                guestPhoneNumber: widget.guestOrder.phoneNumber,
+                                soldOrdered: [
+                                  for (var i = 0;
+                                      i < widget.listProductOrder.length;
+                                      i++) ...[
+                                    OrderProductDescription(
+                                        id: widget.listProductOrder[i].id,
+                                        amount:
+                                            widget.listProductOrder[i].amount,
+                                        type: widget.listProductOrder[i].type,
+                                        price: widget.listProductOrder[i].price,
+                                        productName: widget
+                                            .listProductOrder[i].productName)
+                                  ]
+                                ]));
+                            setState(() {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                            });
+
+                            // _soldOrdered.add(SoldOrderedModel(
+                            //     id: id,
+                            //     amount: amount,
+                            //     type: type,
+                            //     image: image,
+                            //     price: price,
+                            //     productName: productName,
+                            //     guestOrder: guestOrder));
+                          },
                           icon: Icon(Icons.done),
                           label: Text("Tạo đơn hàng")),
                       SizedBox(

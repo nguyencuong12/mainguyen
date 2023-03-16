@@ -1,7 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/classes/guest/guestOrder.dart';
+import 'package:mainguyen/classes/sell/sellProductClass.dart';
+import 'package:mainguyen/enum/product/productEnum.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/pages/bill.dart';
 import 'package:mainguyen/utils/screenSize.dart';
@@ -17,24 +23,14 @@ class SaleProducts extends StatefulWidget {
   State<SaleProducts> createState() => _SaleProductsState();
 }
 
-class SellProduct {
-  final String id;
-  final double amount;
-  SellProduct({required this.id, required this.amount});
-  @override
-  String toString() {
-    // TODO: implement toString
-    return "ID:$id";
-  }
-}
-
 class _SaleProductsState extends State<SaleProducts> {
   @override
   late List<Product> _options = [];
   late Box _productBox;
-  late List<Product> _productSellOriginal = [];
+  late List<SellProduct> _productSellOriginal = [];
+  GuestOrder _guestOrder = GuestOrder();
 
-  late List<SellProduct> _productSell = [];
+  List<SellProduct> _productOrders = [];
 
   @override
   void initState() {
@@ -55,7 +51,7 @@ class _SaleProductsState extends State<SaleProducts> {
     return;
   }
 
-  SizedBox renderTextField(String label, bool typeNumber) {
+  SizedBox renderTextField(String label, bool typeNumber, Function onSubmit) {
     return SizedBox(
         height: 80,
         child: InputDecorator(
@@ -64,6 +60,7 @@ class _SaleProductsState extends State<SaleProducts> {
             label: Text(label),
           ),
           child: TextField(
+            onChanged: (value) => {onSubmit(value)},
             keyboardType: typeNumber ? TextInputType.phone : TextInputType.text,
             decoration: InputDecoration(border: InputBorder.none),
           ),
@@ -82,87 +79,85 @@ class _SaleProductsState extends State<SaleProducts> {
     }
   }
 
-  DataRow renderDataRow(Product product) {
-    var num = 0;
+  DataRow renderDataRow(SellProduct product) {
+    var amountConst = product.amount;
     return DataRow(cells: [
-      DataCell(
-        Container(
-          height: 40,
-          width: 40,
-          padding: const EdgeInsets.all(0),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            onError: (exception, stackTrace) => {},
-            image: MemoryImage(product.imageProduct),
-            fit: BoxFit.contain,
-          )),
-        ),
-      ),
-      DataCell(Text(product.productName, style: TextStyle(fontSize: 10))),
-      DataCell(TextFormField(
-              initialValue: num.toString(),
-              onChanged: (value) => {},
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  suffix: Text("(${renderType(product.type)})",
-                      style: TextStyle(color: Colors.blue))),
-              keyboardType: TextInputType.number,
-              maxLines: null,
-              style: TextStyle(fontSize: 12, color: Colors.blue))
-          //   Flex(
-          //   direction: Axis.horizontal,
-          //   children: [
-          //     CircleAvatar(
-          //       backgroundColor: Colors.blue,
-          //       radius: 8,
-          //       child: IconButton(
-          //         padding: EdgeInsets.zero,
-          //         icon: const Icon(
-          //           Icons.remove,
-          //           size: 10,
-          //         ),
-          //         color: Colors.white,
-          //         onPressed: () {},
-          //       ),
-          //     ),
-          //     const SizedBox(width: 3),
-          //     CircleAvatar(
-          //         backgroundColor: Colors.white,
-          //         radius: 14,
-          //         child: Text("$num ${renderType(product.type)}",
-          //             style: TextStyle(fontSize: 10))),
-          //     const SizedBox(width: 3),
-          //     CircleAvatar(
-          //       backgroundColor: Colors.blue,
-          //       radius: 8,
-          //       child: IconButton(
-          //         padding: EdgeInsets.zero,
-          //         icon: const Icon(
-          //           Icons.add,
-          //           size: 10,
-          //         ),
-          //         color: Colors.white,
-          //         onPressed: () {
-          //           num += 1;
-          //           setState(() {});
-          //         },
-          //       ),
-          //     ),
-          //   ],
-          // )
+      // DataCell(
+      //   Container(
+      //     height: 40,
+      //     width: 40,
+      //     padding: const EdgeInsets.all(0),
+      //     decoration: BoxDecoration(
+      //         image: DecorationImage(
+      //       onError: (exception, stackTrace) => {},
+      //       image: MemoryImage(product.image),
+      //       fit: BoxFit.contain,
+      //     )),
+      //   ),
+      // ),
+      DataCell(Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            padding: const EdgeInsets.all(0),
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              onError: (exception, stackTrace) => {},
+              image: MemoryImage(product.image),
+              fit: BoxFit.contain,
+            )),
           ),
+          SizedBox(width: 5),
+          Text(product.productName, style: TextStyle(fontSize: 10))
+        ],
+      )),
+      DataCell(TextFormField(
+          initialValue: "1",
+          onChanged: (String value) {
+            try {
+              if (double.parse(value) > product.amount) {
+                Fluttertoast.showToast(
+                    msg: "Số hàng trong kho không đủ ",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 10,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              } else {
+                _productOrders.forEach((element) {
+                  if (product.id == element.id) {
+                    element.amount = double.parse(value);
+                  }
+                });
+              }
+            } catch (err) {}
+          },
+          decoration: InputDecoration(
+              border: InputBorder.none,
+              suffix: Text("(${renderType(product.type)})",
+                  style: TextStyle(color: Colors.blue))),
+          keyboardType: TextInputType.number,
+          maxLines: null,
+          style: TextStyle(fontSize: 12, color: Colors.blue))),
       DataCell(Text(UtilsFunction().formatCurrency(product.price),
           style: const TextStyle(fontSize: 10, color: Colors.blue))),
-      DataCell(IconButton(
-        icon: Icon(Icons.close),
-        onPressed: () {
-          setState(() {
-            _productSellOriginal
-                .removeAt(_productSellOriginal.indexOf(product));
-          });
-        },
-      )),
+      DataCell(Text(
+          "${product.amount.toString()} (${renderType(product.type)})",
+          style: const TextStyle(fontSize: 10, color: Colors.blue))),
     ]);
+  }
+
+  bool checkAddElementOrder(List<SellProduct> products, Product productAdd) {
+    bool result = false;
+    products.forEach((element) {
+      if (element.id == productAdd.id) {
+        result = true;
+      }
+    });
+
+    return result;
   }
 
   Widget build(BuildContext context) {
@@ -184,32 +179,84 @@ class _SaleProductsState extends State<SaleProducts> {
                           options: _options,
                           label: "Nhập hàng cần bán",
                           callback: (Product product) {
-                            setState(() {
-                              _productSellOriginal.add(product);
-                            });
+                            if (_productSellOriginal.isNotEmpty) {
+                              bool check = checkAddElementOrder(
+                                  _productSellOriginal, product);
+                              if (!check) {
+                                setState(() {
+                                  _productOrders.add(SellProduct(
+                                      id: product.id,
+                                      amount: 1,
+                                      type: product.type,
+                                      price: product.price,
+                                      image: product.imageProduct,
+                                      productName: product.productName));
+                                  _productSellOriginal.add(SellProduct(
+                                      productName: product.productName,
+                                      id: product.id,
+                                      amount: product.amount,
+                                      type: product.type,
+                                      price: product.price,
+                                      image: product.imageProduct));
+                                });
+                              }
+                              // _productSellOriginal.forEach((element) {
+                              //   if (element.id != product.id) {
+                              //     return "1";
+                              //   }
+                              // });
+                            } else {
+                              setState(() {
+                                _productOrders.add(SellProduct(
+                                    id: product.id,
+                                    amount: 1,
+                                    type: product.type,
+                                    price: product.price,
+                                    image: product.imageProduct,
+                                    productName: product.productName));
+                                _productSellOriginal.add(SellProduct(
+                                    productName: product.productName,
+                                    id: product.id,
+                                    amount: product.amount,
+                                    type: product.type,
+                                    price: product.price,
+                                    image: product.imageProduct));
+                              });
+                            }
                           },
                         )),
-                    // Padding(
-                    //     padding: const EdgeInsets.symmetric(
-                    //         horizontal: 8, vertical: 10),
-                    //     child: AutocompleteField(
-                    //         options: _options2, label: "Nhập người mua")),
                     Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 10),
-                        child: renderTextField("SDT người mua", true)),
+                        child: renderTextField(
+                            "Tên người mua",
+                            false,
+                            (submitValue) =>
+                                {_guestOrder.guestName = submitValue})),
                     Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 10),
-                        child: renderTextField("Địa chỉ giao hàng", false)),
+                        child: renderTextField(
+                            "SDT người mua",
+                            true,
+                            (submitValue) =>
+                                {_guestOrder.phoneNumber = submitValue})),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 10),
+                        child: renderTextField(
+                            "Địa chỉ giao hàng",
+                            false,
+                            (submitValue) =>
+                                {_guestOrder.address = submitValue})),
                     SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
                           horizontalMargin: 10,
                           columns: const [
-                            DataColumn(
-                                label:
-                                    Text("Ảnh", style: TextStyle(fontSize: 9))),
+                            // DataColumn(
+                            //     label:
+                            //         Text("Ảnh", style: TextStyle(fontSize: 9))),
                             DataColumn(
                                 label:
                                     Text("Mục", style: TextStyle(fontSize: 9))),
@@ -220,7 +267,7 @@ class _SaleProductsState extends State<SaleProducts> {
                                 label:
                                     Text("Giá", style: TextStyle(fontSize: 9))),
                             DataColumn(
-                                label: Text("Hành động",
+                                label: Text("Số lượng trong kho",
                                     style: TextStyle(fontSize: 9))),
                           ],
                           rows: [
@@ -246,12 +293,15 @@ class _SaleProductsState extends State<SaleProducts> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const BillPage()),
+                                        builder: (context) => BillPage(
+                                              guestOrder: _guestOrder,
+                                              listProductOrder: _productOrders,
+                                            )),
                                   );
                                 },
                                 icon: Icon(Icons.next_plan),
                                 label: Text("Tiếp tục")),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             ElevatedButton.icon(
@@ -259,9 +309,11 @@ class _SaleProductsState extends State<SaleProducts> {
                                   primary: Colors.red, // background
                                   onPrimary: Colors.white, // foreground
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 icon: Icon(Icons.close),
-                                label: Text("Hủy"))
+                                label: Text("Hủy")),
                           ],
                         )),
                   ],

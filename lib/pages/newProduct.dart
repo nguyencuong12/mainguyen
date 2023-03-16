@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,6 +31,7 @@ class _NewProductState extends State<NewProduct> {
   final ImagePicker picker = ImagePicker();
   ProductClass product = ProductClass()..type = ProductEnum.kg;
   late Uint8List _imageMemory = Uint8List(0);
+  final _formKey = GlobalKey<FormState>();
 
   Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
@@ -55,19 +57,34 @@ class _NewProductState extends State<NewProduct> {
   }
 
   void handleSubmit() async {
-    var box = await Hive.openBox('product');
-    var productCreate = Product(
-        date: DateTime.now(),
-        id: const Uuid().v4(),
-        distributor: product.distributor!,
-        productName: product.productName!,
-        price: product.price!,
-        amount: product.amount!,
-        location: product.location!,
-        type: getType(product.type!),
-        imageProduct: _imageMemory);
-    box.add(productCreate);
-    Navigator.pop(context);
+    if (_formKey.currentState!.validate()) {
+      // If the form is valid, display a snackbar. In the real world,
+      // you'd often call a server or save the information in a database.
+      if (image == null) {
+        Fluttertoast.showToast(
+            msg: "Vui lòng chọn ảnh cho sản phẩm ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 10,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        var box = await Hive.openBox('product');
+        var productCreate = Product(
+            date: DateTime.now(),
+            id: const Uuid().v4(),
+            distributor: product.distributor!,
+            productName: product.productName!,
+            price: product.price!,
+            amount: product.amount!,
+            location: product.location!,
+            type: getType(product.type!),
+            imageProduct: _imageMemory);
+        box.add(productCreate);
+        Navigator.pop(context);
+      }
+    }
   }
 
   ProductEnumHive getType(ProductEnum type) {
@@ -78,19 +95,6 @@ class _NewProductState extends State<NewProduct> {
         return ProductEnumHive.tree;
       case ProductEnum.bag:
         return ProductEnumHive.bag;
-    }
-  }
-
-  handleEnableSubmit() {
-    if (product.type != null &&
-        product.productName != null &&
-        product.distributor != null &&
-        product.amount != null &&
-        product.price != null &&
-        product.location != null) {
-      return handleSubmit;
-    } else {
-      return null;
     }
   }
 
@@ -176,114 +180,151 @@ class _NewProductState extends State<NewProduct> {
                             ),
                           )
                         : Text(""),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: TextField(
-                        onSubmitted: (distributor) {
-                          setState(() {
-                            product.distributor = distributor;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Tên người cung cấp hàng"),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: TextField(
-                        onSubmitted: (productName) {
-                          setState(() {
-                            product.productName = productName;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Tên sản phẩm"),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    SelectionMenu<String>(
-                      itemsList: <String>['KG', 'CÂY', 'BAO'],
-                      onItemSelected: (String selectedItem) {
-                        switch (selectedItem) {
-                          case "KG":
-                            {
-                              product.type = ProductEnum.kg;
-                              break;
-                            }
-                          case "CÂY":
-                            {
-                              product.type = ProductEnum.tree;
-                              break;
-                            }
-                          case "BAO":
-                            {
-                              product.type = ProductEnum.bag;
-                              break;
-                            }
-                        }
-                        setState(() {});
-                      },
-                      itemBuilder: itemBuildSelection,
-                      showSelectedItemAsTrigger: true,
-                      initiallySelectedItemIndex: 0,
-                      closeMenuInsteadOfPop: true,
-                      closeMenuOnEmptyMenuSpaceTap: false,
-                      closeMenuWhenTappedOutside: true,
-                      closeMenuOnItemSelected: true,
-                      allowMenuToCloseBeforeOpenCompletes: true,
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        onSubmitted: (price) {
-                          setState(() {
-                            product.price = int.parse(price);
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Giá sản phẩm"),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        onSubmitted: (amount) {
-                          setState(() {
-                            product.amount = double.parse(amount);
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Số lượng"),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                      child: TextField(
-                        onSubmitted: (location) {
-                          setState(() {
-                            product.location = location;
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Vị trí đặt trong kho"),
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
+                    Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 10),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vui lòng nhập tên người cung cấp hàng';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (distributor) {
+                                  setState(() {
+                                    product.distributor = distributor;
+                                  });
+                                },
+                                decoration: const InputDecoration(
+                                  label: Text("Tên người cung cấp hàng"),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 10),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vui lòng nhập tên sản phẩm cần tạo';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (productName) => {
+                                  setState(() {
+                                    product.productName = productName;
+                                  }),
+                                },
+                                decoration: const InputDecoration(
+                                  label: Text("Tên sản phẩm"),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            SelectionMenu<String>(
+                              itemsList: <String>['KG', 'CÂY', 'BAO'],
+                              onItemSelected: (String selectedItem) {
+                                switch (selectedItem) {
+                                  case "KG":
+                                    {
+                                      product.type = ProductEnum.kg;
+                                      break;
+                                    }
+                                  case "CÂY":
+                                    {
+                                      product.type = ProductEnum.tree;
+                                      break;
+                                    }
+                                  case "BAO":
+                                    {
+                                      product.type = ProductEnum.bag;
+                                      break;
+                                    }
+                                }
+                                setState(() {});
+                              },
+                              itemBuilder: itemBuildSelection,
+                              showSelectedItemAsTrigger: true,
+                              initiallySelectedItemIndex: 0,
+                              closeMenuInsteadOfPop: true,
+                              closeMenuOnEmptyMenuSpaceTap: false,
+                              closeMenuWhenTappedOutside: true,
+                              closeMenuOnItemSelected: true,
+                              allowMenuToCloseBeforeOpenCompletes: true,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 10),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vui lòng nhập giá sản phẩm';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.number,
+                                onChanged: (price) => {
+                                  setState(() {
+                                    product.price = int.parse(price);
+                                  })
+                                },
+                                decoration: const InputDecoration(
+                                  label: Text("Giá sản phẩm"),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 10),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vui lòng nhập số lượng hàng';
+                                  }
+                                  return null;
+                                },
+                                keyboardType: TextInputType.number,
+                                onChanged: (amount) => {
+                                  setState(() {
+                                    product.amount = double.parse(amount);
+                                  })
+                                },
+                                decoration: const InputDecoration(
+                                  label: Text("Số lượng"),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 10),
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Vui lòng nhập vị trí đặt hàng trong kho';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (location) => {
+                                  setState(() {
+                                    product.location = location;
+                                  })
+                                },
+                                // onSubmitted: (location) {},
+                                decoration: const InputDecoration(
+                                  label: Text("Vị trí đặt trong kho"),
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -295,7 +336,7 @@ class _NewProductState extends State<NewProduct> {
                           // onPressed: () async {
                           //   handleSubmit();
                           // },
-                          onPressed: handleEnableSubmit(),
+                          onPressed: () => {handleSubmit()},
                           icon: const Icon(
                             Icons.done,
                             size: 24.0,
@@ -311,7 +352,11 @@ class _NewProductState extends State<NewProduct> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () async {
+                            var box = await Hive.openBox('product');
+                            box.clear();
+
                             Navigator.pop(context);
+
                             // box.length;
                             // Product b = box.getAt(0);
                             // print("IMAGE ${b.imageProduct}");

@@ -153,8 +153,8 @@ class _InputProductState extends State<InputProduct> {
                     SizedBox(height: 10),
 
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 10),
                       child: TextField(
                         keyboardType: TextInputType.number,
                         onSubmitted: (amount) {
@@ -168,7 +168,6 @@ class _InputProductState extends State<InputProduct> {
                         ),
                       ),
                     ),
-
                     // Text(_productOrder[i].productName)
                   ],
                   SizedBox(height: 30),

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:mainguyen/classes/sell/sellProductClass.dart';
 import 'package:mainguyen/models/product/product.dart';
+import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -14,7 +16,9 @@ void main() async {
   Hive
     ..init(documentsDirectory.path)
     ..registerAdapter(ProductAdapter())
-    ..registerAdapter(ProductEnumHiveAdapter());
+    ..registerAdapter(ProductEnumHiveAdapter())
+    ..registerAdapter(SoldOrderedModelAdapter())
+    ..registerAdapter(OrderProductDescriptionAdapter());
 
   await Hive.openBox("product");
 
