@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
@@ -53,6 +54,30 @@ class _MenuPageState extends State<MenuPage> {
                                           'assets/appIcons/package.png')),
                                   title: Text(
                                     'Hàng hóa đã bán ',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ))),
+                      InkWell(
+                          onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const OurOfStock()),
+                                )
+                              },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.green)),
+                              child: const Align(
+                                child: ListTile(
+                                  onTap: null,
+                                  leading: Image(
+                                      image: AssetImage(
+                                          'assets/appIcons/package.png')),
+                                  title: Text(
+                                    'Sắp hết hàng ',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),

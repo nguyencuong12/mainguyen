@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/classes/guest/guestOrder.dart';
@@ -254,20 +255,19 @@ class _BillPageState extends State<BillPage> {
                                   ]
                                 ]));
                             setState(() {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
+                              Fluttertoast.showToast(
+                                  msg: "Đã tạo đơn hàng thành công !! ",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 10,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) => const HomePage()));
                             });
-
-                            // _soldOrdered.add(SoldOrderedModel(
-                            //     id: id,
-                            //     amount: amount,
-                            //     type: type,
-                            //     image: image,
-                            //     price: price,
-                            //     productName: productName,
-                            //     guestOrder: guestOrder));
                           },
                           icon: Icon(Icons.done),
                           label: Text("Tạo đơn hàng")),

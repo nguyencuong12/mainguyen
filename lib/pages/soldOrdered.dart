@@ -49,7 +49,7 @@ class _SoldOrdersState extends State<SoldOrders> {
         body: BodyWidget(
             bodyWidget: Column(
           children: [
-            for (var i = 0; i < _soldOrdered.length; i++) ...[
+            for (var i = _soldOrdered.length - 1; i >= 0; i--) ...[
               getDivider(),
               Text("(${i + 1})"),
               SizedBox(height: 20),
