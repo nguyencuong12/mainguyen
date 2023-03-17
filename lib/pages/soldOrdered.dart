@@ -28,11 +28,11 @@ class _SoldOrdersState extends State<SoldOrders> {
 
   Future _openBox() async {
     _soldOrderedBox = await Hive.openBox('soldOrdered');
+    _soldOrdered = [];
     // _soldOrderedBox.clear();
     for (var i = 0; i < _soldOrderedBox.length; i++) {
       _soldOrdered.add(_soldOrderedBox.getAt(i));
     }
-
     setState(() {});
     return;
   }
@@ -50,11 +50,30 @@ class _SoldOrdersState extends State<SoldOrders> {
             bodyWidget: Column(
           children: [
             for (var i = _soldOrdered.length - 1; i >= 0; i--) ...[
-              getDivider(),
-              Text("(${i + 1})"),
-              SizedBox(height: 20),
-              Image(image: MemoryImage(_soldOrdered[i].image)),
-              SizedBox(height: 50),
+              InkWell(
+                onTap: () => {},
+                child: Container(
+                    child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              _soldOrderedBox.deleteAt(i);
+                              setState(() {
+                                _openBox();
+                              });
+                            },
+                            icon: const Icon(Icons.delete, color: Colors.red))
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Image(image: MemoryImage(_soldOrdered[i].image)),
+                    SizedBox(height: 80),
+                  ],
+                )),
+              )
             ]
           ],
         )),

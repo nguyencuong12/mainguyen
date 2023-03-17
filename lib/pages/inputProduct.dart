@@ -6,10 +6,13 @@ import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/photoView.dart';
 import 'package:mainguyen/widgets/productDetails/productDetails.dart';
 
 class InputProduct extends StatefulWidget {
-  const InputProduct({Key? key}) : super(key: key);
+  InputProduct({Key? key, this.initOrder}) : super(key: key);
+
+  Product? initOrder;
 
   @override
   _InputProductState createState() => _InputProductState();
@@ -33,16 +36,25 @@ class _InputProductState extends State<InputProduct> {
   late List<Product> _productOrder = [];
 
   late List<Order> _productOrderWithAmount = [];
+  final _formKey = GlobalKey<FormState>();
+
+  handleInitOrder() {
+    if (widget.initOrder != null) {
+      setState(() {
+        _productOrder.add(widget.initOrder!);
+      });
+    }
+  }
 
   void initState() {
     // TODO: implement initState
     super.initState();
     _openBox();
+    handleInitOrder();
   }
 
   Future _openBox() async {
     _productBox = await Hive.openBox('product');
-
     _options = [];
     for (var i = 0; i < _productBox.length; i++) {
       _options.add(_productBox.getAt(i));
@@ -125,17 +137,27 @@ class _InputProductState extends State<InputProduct> {
                               });
                             },
                             icon: Icon(Icons.close))),
-                    Container(
-                      height: 140,
-                      width: 140,
-                      padding: const EdgeInsets.all(0),
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                        onError: (exception, stackTrace) => {},
-                        image: MemoryImage(_productOrder[i].imageProduct),
-                        fit: BoxFit.contain,
-                      )),
-                    ),
+                    InkWell(
+                        onTap: () => {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PhotoViewWidget(
+                                        image: _productOrder[i].imageProduct)),
+                              )
+                            },
+                        child: Container(
+                          height: 140,
+                          width: 140,
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                            onError: (exception, stackTrace) => {},
+                            image: MemoryImage(_productOrder[i].imageProduct),
+                            fit: BoxFit.contain,
+                          )),
+                        )),
+
                     SizedBox(height: 30),
                     Text("Tên sản phẩm: ${_productOrder[i].productName} ",
                         style: TextStyle(
@@ -151,23 +173,34 @@ class _InputProductState extends State<InputProduct> {
                     rowDescription("Hiện đang có:",
                         "${_productOrder[i].amount} ${renderType(_productOrder[i].type)} (Trong kho)"),
                     SizedBox(height: 10),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 10),
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        onSubmitted: (amount) {
-                          _productOrderWithAmount.add(Order(
-                              id: _productOrder[i].id,
-                              amount: double.parse(amount)));
-                        },
-                        decoration: const InputDecoration(
-                          label: Text("Số lượng cần nhập thêm"),
-                          border: OutlineInputBorder(),
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 10),
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Vui lòng nhập số lượng hàng cần nhập thêm';
+                            }
+                            return null;
+                          },
+                          onFieldSubmitted: (amount) {
+                            try {
+                              _productOrderWithAmount.add(Order(
+                                  id: _productOrder[i].id,
+                                  amount: double.parse(amount)));
+                            } catch (errr) {}
+                          },
+                          decoration: const InputDecoration(
+                            label: Text("Số lượng cần nhập thêm"),
+                            border: OutlineInputBorder(),
+                          ),
                         ),
                       ),
-                    ),
+                    )
+
                     // Text(_productOrder[i].productName)
                   ],
                   SizedBox(height: 30),
@@ -183,17 +216,18 @@ class _InputProductState extends State<InputProduct> {
                         //   handleSubmit();
                         // },
                         onPressed: () {
-                          for (var i = 0; i < _productBox.length; i++) {
-                            Product temp = _productBox.getAt(i);
-                            _productOrderWithAmount.forEach((element) {
-                              if (element.id == temp.id) {
-                                temp.amount += element.amount;
-                              }
-                            });
-
+                          if (_formKey.currentState!.validate()) {
+                            for (var i = 0; i < _productBox.length; i++) {
+                              Product temp = _productBox.getAt(i);
+                              _productOrderWithAmount.forEach((element) {
+                                if (element.id == temp.id) {
+                                  temp.amount += element.amount;
+                                }
+                              });
+                            }
+                            Navigator.pop(context);
                             // _options.add(_productBox.getAt(i));
                           }
-                          Navigator.pop(context);
                         },
                         icon: const Icon(
                           Icons.done,

@@ -7,6 +7,7 @@ import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/photoView.dart';
 
 class OurOfStock extends StatefulWidget {
   const OurOfStock({Key? key}) : super(key: key);
@@ -67,9 +68,10 @@ class _OurOfStockState extends State<OurOfStock> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title),
+              Text(title, style: TextStyle(fontSize: 12)),
               SizedBox(width: 10),
-              Text(value, style: TextStyle(color: Colors.green))
+              Text(value,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12))
             ],
           )),
     );
@@ -100,17 +102,28 @@ class _OurOfStockState extends State<OurOfStock> {
                 child: Column(
                   children: [
                     for (var i = 0; i < getOurOfStock().length; i++) ...[
-                      Container(
-                        height: 140,
-                        width: 140,
-                        padding: const EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          onError: (exception, stackTrace) => {},
-                          image: MemoryImage(getOurOfStock()[i].imageProduct),
-                          fit: BoxFit.contain,
-                        )),
-                      ),
+                      InkWell(
+                          onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PhotoViewWidget(
+                                          image:
+                                              getOurOfStock()[i].imageProduct)),
+                                )
+                              },
+                          child: Container(
+                            height: 140,
+                            width: 140,
+                            padding: const EdgeInsets.all(0),
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                              onError: (exception, stackTrace) => {},
+                              image:
+                                  MemoryImage(getOurOfStock()[i].imageProduct),
+                              fit: BoxFit.contain,
+                            )),
+                          )),
                       SizedBox(height: 10),
                       Text("Tên sản phẩm: ${getOurOfStock()[i].productName} ",
                           style: TextStyle(
@@ -151,7 +164,9 @@ class _OurOfStockState extends State<OurOfStock> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => InputProduct()),
+                                  builder: (context) => InputProduct(
+                                        initOrder: getOurOfStock()[i],
+                                      )),
                             );
                           },
                           icon: Icon(Icons.next_plan),

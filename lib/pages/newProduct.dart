@@ -169,16 +169,62 @@ class _NewProductState extends State<NewProduct> {
                       ),
                     ),
                     image != null
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.memory(_imageMemory,
-                                  width: MediaQuery.of(context).size.width / 2,
-                                  height: 200,
-                                  fit: BoxFit.cover),
-                            ),
-                          )
+                        ? InkWell(
+                            onTap: () => {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) {
+                                        return AlertDialog(
+                                          insetPadding: EdgeInsets.symmetric(
+                                              vertical: 220),
+                                          content: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ElevatedButton(
+                                                //if user click this button, user can upload image from gallery
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  getImage(ImageSource.gallery);
+                                                },
+                                                child: Row(
+                                                  children: const [
+                                                    Icon(Icons.image),
+                                                    SizedBox(width: 10),
+                                                    Text(
+                                                        'Chọn ảnh từ điện thoại'),
+                                                  ],
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                //if user click this button, user can upload image from gallery
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  getImage(ImageSource.camera);
+                                                },
+                                                child: Row(
+                                                  children: const [
+                                                    Icon(Icons.image),
+                                                    SizedBox(width: 10),
+                                                    Text('Chụp ảnh'),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      })
+                                },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage: MemoryImage(_imageMemory),
+                                  )),
+                            ))
                         : Text(""),
                     Form(
                         key: _formKey,
@@ -352,8 +398,8 @@ class _NewProductState extends State<NewProduct> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () async {
-                            var box = await Hive.openBox('product');
-                            box.clear();
+                            // var box = await Hive.openBox('product');
+                            // box.clear();
 
                             Navigator.pop(context);
 

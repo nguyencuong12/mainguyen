@@ -7,6 +7,7 @@ import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/pages/allProduct.dart';
 import 'package:mainguyen/pages/createGuest.dart';
+import 'package:mainguyen/pages/delivery.dart';
 import 'package:mainguyen/pages/inputProduct.dart';
 import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
@@ -142,14 +143,18 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const InputProduct()),
+                              builder: (context) => InputProduct()),
                         )
                       }),
               renderProductBox(
                   "Vận chuyển",
                   "assets/appIcons/delivery.png",
                   () async => {
-                        await FlutterPhoneDirectCaller.callNumber("0978531164")
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DeliveryWidget()),
+                        )
                       }),
               renderProductBox(
                   "Thêm khách hàng ",
@@ -321,7 +326,7 @@ class AutocompleteField extends StatelessWidget {
                     elevation: 4.0,
                     child: Container(
                       height: 200.0,
-                      width: 350,
+                      width: screenSizeWithoutContext.width / 3.4,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       child: ListView.builder(

@@ -15,6 +15,7 @@ import 'package:mainguyen/utils/sizeAppbarButton.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/photoView.dart';
 
 class SaleProducts extends StatefulWidget {
   const SaleProducts({super.key});
@@ -31,6 +32,8 @@ class _SaleProductsState extends State<SaleProducts> {
   GuestOrder _guestOrder = GuestOrder();
 
   List<SellProduct> _productOrders = [];
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -95,23 +98,32 @@ class _SaleProductsState extends State<SaleProducts> {
       //     )),
       //   ),
       // ),
-      DataCell(Row(
-        children: [
-          Container(
-            height: 40,
-            width: 40,
-            padding: const EdgeInsets.all(0),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              onError: (exception, stackTrace) => {},
-              image: MemoryImage(product.image),
-              fit: BoxFit.contain,
-            )),
-          ),
-          SizedBox(width: 5),
-          Text(product.productName, style: TextStyle(fontSize: 10))
-        ],
-      )),
+      DataCell(InkWell(
+          onTap: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PhotoViewWidget(image: product.image)),
+                )
+              },
+          child: Row(
+            children: [
+              Container(
+                height: 40,
+                width: 40,
+                padding: const EdgeInsets.all(0),
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  onError: (exception, stackTrace) => {},
+                  image: MemoryImage(product.image),
+                  fit: BoxFit.contain,
+                )),
+              ),
+              SizedBox(width: 5),
+              Text(product.productName, style: TextStyle(fontSize: 10))
+            ],
+          ))),
       DataCell(TextFormField(
           initialValue: "1",
           onChanged: (String value) {
@@ -225,14 +237,32 @@ class _SaleProductsState extends State<SaleProducts> {
                             }
                           },
                         )),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 10),
-                        child: renderTextField(
-                            "Tên người mua",
-                            false,
-                            (submitValue) =>
-                                {_guestOrder.guestName = submitValue})),
+                    Form(
+                      key: _formKey,
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 10),
+                          child: SizedBox(
+                              height: 80,
+                              child: InputDecorator(
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  label: Text("Tên người mua"),
+                                ),
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Vui lòng tên người mua';
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) =>
+                                      {_guestOrder.guestName = value},
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none),
+                                ),
+                              ))),
+                    ),
                     Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 10),
@@ -290,14 +320,17 @@ class _SaleProductsState extends State<SaleProducts> {
                                   onPrimary: Colors.white, // foreground
                                 ),
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => BillPage(
-                                              guestOrder: _guestOrder,
-                                              listProductOrder: _productOrders,
-                                            )),
-                                  );
+                                  if (_formKey.currentState!.validate()) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => BillPage(
+                                                guestOrder: _guestOrder,
+                                                listProductOrder:
+                                                    _productOrders,
+                                              )),
+                                    );
+                                  }
                                 },
                                 icon: Icon(Icons.next_plan),
                                 label: Text("Tiếp tục")),
@@ -377,7 +410,7 @@ class AutocompleteField extends StatelessWidget {
                     elevation: 4.0,
                     child: Container(
                       height: 200.0,
-                      width: 350,
+                      width: screenSizeWithoutContext.width / 3.4,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10)),
                       child: ListView.builder(

@@ -10,6 +10,7 @@ import 'package:mainguyen/classes/sell/sellProductClass.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
+import 'package:mainguyen/pages/soldOrdered.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
@@ -133,6 +134,8 @@ class _BillPageState extends State<BillPage> {
                   WidgetsToImage(
                     controller: controller,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text("HÓA ĐƠN BÁN HÀNG ",
                             style: TextStyle(
@@ -145,12 +148,7 @@ class _BillPageState extends State<BillPage> {
                                 color: Colors.green,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 5),
-                        Text(
-                            "Ngày bán hàng: ${UtilsFunction().formatDateTime(DateTime.now())}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12)),
-                        getDivider(),
+                        const SizedBox(height: 20),
                         Text(
                             "Tên khách hàng : ${widget.guestOrder.guestName ?? ""}",
                             textAlign: TextAlign.center,
@@ -166,7 +164,6 @@ class _BillPageState extends State<BillPage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 12)),
                         const SizedBox(height: 5),
-                        getDivider(),
                         const SizedBox(height: 5),
                         SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -204,7 +201,18 @@ class _BillPageState extends State<BillPage> {
                             Text(
                                 UtilsFunction()
                                     .formatCurrency(handleRenderTotal()),
-                                style: TextStyle(fontSize: 14))
+                                style: TextStyle(fontSize: 14)),
+                          ],
+                        ),
+                        SizedBox(height: 30),
+                        Flex(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          direction: Axis.horizontal,
+                          children: [
+                            Text(
+                                "Ngày bán hàng: ${UtilsFunction().formatDateTime(DateTime.now())}",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 12)),
                           ],
                         ),
                       ],
@@ -263,10 +271,11 @@ class _BillPageState extends State<BillPage> {
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
                                   fontSize: 16.0);
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => const HomePage()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SoldOrders()));
                             });
                           },
                           icon: Icon(Icons.done),

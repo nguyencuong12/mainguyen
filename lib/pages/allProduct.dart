@@ -32,6 +32,7 @@ class _AllProductsState extends State<AllProducts> {
 
   Future _openBox() async {
     _productBox = await Hive.openBox('product');
+    _products = [];
     for (var i = 0; i < _productBox.length; i++) {
       _products.add(_productBox.getAt(i));
     }
@@ -40,12 +41,15 @@ class _AllProductsState extends State<AllProducts> {
   }
 
   InkWell renderProductBox(
-      String title, Uint8List imageMemory, Function callback) {
+      String title, Uint8List imageMemory, Function callback, Function delete) {
     // dynamic imageVarible =
 
     return InkWell(
       onTap: () {
         callback();
+      },
+      onLongPress: () {
+        delete();
       },
       child: Container(
           decoration: BoxDecoration(
@@ -61,6 +65,12 @@ class _AllProductsState extends State<AllProducts> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 direction: Axis.vertical,
                 children: [
+                  // Align(
+                  //     alignment: Alignment.topRight,
+                  //     child: IconButton(
+                  //         padding: EdgeInsets.all(0),
+                  //         onPressed: () {},
+                  //         icon: Icon(Icons.delete, color: Colors.red))),
                   Container(
                     height: 120,
                     width: 160,
@@ -104,6 +114,10 @@ class _AllProductsState extends State<AllProducts> {
                             builder: (context) =>
                                 ProductDetails(product: product)),
                       ),
+                    },
+                () async => {
+                      _productBox.deleteAt(_products.indexOf(product)),
+                      _openBox()
                     }))
           ],
         ),

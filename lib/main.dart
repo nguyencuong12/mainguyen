@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/classes/sell/sellProductClass.dart';
+import 'package:mainguyen/models/delivery/deliveryModel.dart';
+import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
@@ -18,7 +20,10 @@ void main() async {
     ..registerAdapter(ProductAdapter())
     ..registerAdapter(ProductEnumHiveAdapter())
     ..registerAdapter(SoldOrderedModelAdapter())
-    ..registerAdapter(OrderProductDescriptionAdapter());
+    ..registerAdapter(OrderProductDescriptionAdapter())
+    ..registerAdapter(DeliveryModelAdapter())
+    ..registerAdapter(GuestModelAdapter())
+    ..registerAdapter(GuestTypeEnumAdapter());
 
   await Hive.openBox("product");
 
