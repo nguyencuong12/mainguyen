@@ -55,7 +55,7 @@ class _GuestPageState extends State<GuestPage> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: [
-              for (var i = 0; i < _guestList.length; i++) ...[
+              for (var i = _guestList.length - 1; i >= 0; i--) ...[
                 Card(
                     child: Padding(
                   padding: const EdgeInsets.only(
