@@ -271,11 +271,14 @@ class _BillPageState extends State<BillPage> {
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
                                   fontSize: 16.0);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SoldOrders()));
+
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
+                              // Navigator.push(
+                              //     context,
+                              //     MaterialPageRoute(
+                              //         builder: (context) =>
+                              //             const SoldOrders()));
                             });
                           },
                           icon: Icon(Icons.done),

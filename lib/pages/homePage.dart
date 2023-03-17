@@ -208,41 +208,20 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: const [
-                              Icon(Icons.safety_check_outlined),
-                              Text("Setting 1")
+                              Icon(Icons.house),
+                              Text("Trang chính")
                             ],
                           ),
-                          onPressed: () => {}),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MaterialButton(
-                          minWidth: 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.safety_check_outlined),
-                              Text("Setting 1")
-                            ],
-                          ),
-                          onPressed: () => {}),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MaterialButton(
-                          minWidth: 40,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons.safety_check_outlined),
-                              Text("Setting 1")
-                            ],
-                          ),
-                          onPressed: () => {}),
+                          onPressed: () => {
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst)
+
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) => const HomePage()),
+                                // )
+                              }),
                     ],
                   ),
                   Row(
