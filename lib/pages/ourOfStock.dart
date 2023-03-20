@@ -7,7 +7,9 @@ import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/emptyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class OurOfStock extends StatefulWidget {
   const OurOfStock({Key? key}) : super(key: key);
@@ -99,90 +101,94 @@ class _OurOfStockState extends State<OurOfStock> {
               width: screenSizeWithoutContext.width,
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-                child: Column(
-                  children: [
-                    for (var i = 0; i < getOurOfStock().length; i++) ...[
-                      InkWell(
-                          onTap: () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PhotoViewWidget(
-                                          image:
-                                              getOurOfStock()[i].imageProduct)),
-                                )
-                              },
-                          child: Container(
-                            height: 140,
-                            width: 140,
-                            padding: const EdgeInsets.all(0),
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                              onError: (exception, stackTrace) => {},
-                              image:
-                                  MemoryImage(getOurOfStock()[i].imageProduct),
-                              fit: BoxFit.contain,
-                            )),
-                          )),
-                      SizedBox(height: 10),
-                      Text("Tên sản phẩm: ${getOurOfStock()[i].productName} ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: TextSize().getLabelTextSize())),
-                      SizedBox(height: 10),
-                      rowDescription("Giá:",
-                          "${UtilsFunction().formatCurrency(getOurOfStock()[i].price)}/${renderType(getOurOfStock()[i].type)}"),
-                      SizedBox(height: 10),
-                      rowDescription("Số lượng còn lại:",
-                          " ${getOurOfStock()[i].amount} ${renderType(getOurOfStock()[i].type)}"),
-                      SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                child: getOurOfStock().isNotEmpty
+                    ? Column(
                         children: [
-                          Text("Trạng thái:"),
-                          SizedBox(width: 10),
-                          Container(
-                              width: 100,
-                              height: 15,
-                              decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(30)),
-                              child: Text(
-                                "Sắp hết hàng",
-                                style: TextStyle(color: Colors.white),
-                                textAlign: TextAlign.center,
-                              ))
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.green, // background
-                            onPrimary: Colors.white, // foreground
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => InputProduct(
-                                        initOrder: getOurOfStock()[i],
-                                      )),
-                            );
-                          },
-                          icon: Icon(Icons.next_plan),
-                          label: Text("Nhập hàng")),
-                      getDivider(),
+                          for (var i = 0; i < getOurOfStock().length; i++) ...[
+                            InkWell(
+                                onTap: () => {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PhotoViewWidget(
+                                                    image: getOurOfStock()[i]
+                                                        .imageProduct)),
+                                      )
+                                    },
+                                child: Container(
+                                  height: 140,
+                                  width: 140,
+                                  padding: const EdgeInsets.all(0),
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                    onError: (exception, stackTrace) => {},
+                                    image: MemoryImage(
+                                        getOurOfStock()[i].imageProduct),
+                                    fit: BoxFit.contain,
+                                  )),
+                                )),
+                            SizedBox(height: 10),
+                            Text(
+                                "Tên sản phẩm: ${getOurOfStock()[i].productName} ",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: TextSize().getLabelTextSize())),
+                            SizedBox(height: 10),
+                            rowDescription("Giá:",
+                                "${UtilsFunction().formatCurrency(getOurOfStock()[i].price)}/${renderType(getOurOfStock()[i].type)}"),
+                            SizedBox(height: 10),
+                            rowDescription("Số lượng còn lại:",
+                                " ${getOurOfStock()[i].amount} ${renderType(getOurOfStock()[i].type)}"),
+                            SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Trạng thái:"),
+                                SizedBox(width: 10),
+                                Container(
+                                    width: 100,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
+                                    child: Text(
+                                      "Sắp hết hàng",
+                                      style: TextStyle(color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ))
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.green, // background
+                                  onPrimary: Colors.white, // foreground
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => InputProduct(
+                                              initOrder: getOurOfStock()[i],
+                                            )),
+                                  );
+                                },
+                                icon: Icon(Icons.next_plan),
+                                label: Text("Nhập hàng")),
+                            getDivider(),
 
-                      /////
-                      ///
-                    ],
-                  ],
-                ),
+                            /////
+                            ///
+                          ],
+                        ],
+                      )
+                    : ImageEmpty(title: "Không có hàng sắp hết"),
               ))),
       appBar: CustomAppBar(
           backButton: true,
-          title: Text("Hàng sắp hết",
-              style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+          title: const TitleAppbarWidget(content: "Hàng sắp hết"),
           widgetActions: []),
     );
   }

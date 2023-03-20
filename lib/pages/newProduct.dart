@@ -13,6 +13,7 @@ import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 import 'package:selection_menu/selection_menu.dart';
 import 'package:selection_menu/components_configurations.dart';
 import 'package:uuid/uuid.dart';
@@ -102,8 +103,7 @@ class _NewProductState extends State<NewProduct> {
     return Scaffold(
         appBar: CustomAppBar(
             backButton: true,
-            title: Text("Tạo sản phẩm mới ",
-                style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+            title: const TitleAppbarWidget(content: "Tạo sản phẩm mới"),
             widgetActions: []),
         body: BodyWidget(
             bodyWidget: Container(
@@ -252,7 +252,7 @@ class _NewProductState extends State<NewProduct> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 10),
                               child: TextFormField(
                                 validator: (value) {

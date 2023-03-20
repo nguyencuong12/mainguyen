@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/emptyWidget.dart';
 import 'package:mainguyen/widgets/productDetails/productDetails.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 import '../utils/colorApps.dart';
 import '../utils/textSize.dart';
@@ -49,7 +52,7 @@ class _AllProductsState extends State<AllProducts> {
         callback();
       },
       onLongPress: () {
-        delete();
+        getDeleteDialog(context, () => {delete()});
       },
       child: Container(
           decoration: BoxDecoration(
@@ -97,33 +100,36 @@ class _AllProductsState extends State<AllProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 20,
-          crossAxisCount: 2,
-          children: [
-            ..._products.map((product) => renderProductBox(
-                product.productName,
-                product.imageProduct,
-                () => {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetails(product: product)),
-                      ),
-                    },
-                () async => {
-                      _productBox.deleteAt(_products.indexOf(product)),
-                      _openBox()
-                    }))
-          ],
-        ),
+        body: _products.isNotEmpty
+            ? GridView.count(
+                primary: false,
+                padding: const EdgeInsets.all(20),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 20,
+                crossAxisCount: 2,
+                children: [
+                  ..._products.map((product) => renderProductBox(
+                      product.productName,
+                      product.imageProduct,
+                      () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProductDetails(product: product)),
+                            ),
+                          },
+                      () async => {
+                            _productBox.deleteAt(_products.indexOf(product)),
+                            _openBox()
+                          }))
+                ],
+              )
+            : ImageEmpty(title: "Hiện chưa có sản phẩm nào"),
         appBar: CustomAppBar(
             backButton: true,
-            title: Text("Tất cả các sản phẩm trong kho"),
+            title:
+                const TitleAppbarWidget(content: "Tất cả sản phẩm trong kho"),
             widgetActions: []));
   }
 }

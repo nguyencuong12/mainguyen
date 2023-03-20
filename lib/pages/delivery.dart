@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/delivery/deliveryModel.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class DeliveryWidget extends StatefulWidget {
   const DeliveryWidget({super.key});
@@ -93,10 +95,12 @@ class _DeliveryWidgetState extends State<DeliveryWidget> {
                                             color: Colors.blue)),
                                     IconButton(
                                         onPressed: () async {
-                                          _deliveryBox.deleteAt(i);
-                                          _openBox();
-                                          // await FlutterPhoneDirectCaller.callNumber(
-                                          //     _deliveries[i].phoneNumber);
+                                          getDeleteDialog(
+                                              context,
+                                              () => {
+                                                    _deliveryBox.deleteAt(i),
+                                                    _openBox()
+                                                  });
                                         },
                                         icon: const Icon(Icons.delete,
                                             color: Colors.red))
@@ -286,6 +290,8 @@ class _DeliveryWidgetState extends State<DeliveryWidget> {
                   ],
                 ))),
         appBar: CustomAppBar(
-            backButton: true, title: Text("Xe vận chuyển"), widgetActions: []));
+            backButton: true,
+            title: const TitleAppbarWidget(content: "Xe vận chuyển"),
+            widgetActions: []));
   }
 }

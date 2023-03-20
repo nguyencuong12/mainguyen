@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
+import 'package:mainguyen/widgets/emptyWidget.dart';
 
 class SoldOrders extends StatefulWidget {
   const SoldOrders({super.key});
@@ -47,36 +49,43 @@ class _SoldOrdersState extends State<SoldOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: BodyWidget(
-            bodyWidget: Column(
-          children: [
-            for (var i = _soldOrdered.length - 1; i >= 0; i--) ...[
-              InkWell(
-                onTap: () => {},
-                child: Container(
-                    child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              _soldOrderedBox.deleteAt(i);
-                              setState(() {
-                                _openBox();
-                              });
-                            },
-                            icon: const Icon(Icons.delete, color: Colors.red))
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Image(image: MemoryImage(_soldOrdered[i].image)),
-                    SizedBox(height: 80),
-                  ],
-                )),
-              )
-            ]
-          ],
-        )),
+            bodyWidget: _soldOrdered.isNotEmpty
+                ? Column(
+                    children: [
+                      for (var i = _soldOrdered.length - 1; i >= 0; i--) ...[
+                        InkWell(
+                          onTap: () => {},
+                          child: Container(
+                              child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        getDeleteDialog(
+                                            context,
+                                            () => {
+                                                  _soldOrderedBox.deleteAt(i),
+                                                  setState(() {
+                                                    _openBox();
+                                                  })
+                                                });
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red))
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Image(image: MemoryImage(_soldOrdered[i].image)),
+                              SizedBox(height: 80),
+                            ],
+                          )),
+                        )
+                      ]
+                    ],
+                  )
+                : ImageEmpty(title: "Không có đơn hàng nào ")),
         appBar: CustomAppBar(
             widgetActions: [],
             backButton: true,

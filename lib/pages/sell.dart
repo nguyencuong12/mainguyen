@@ -8,6 +8,7 @@ import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/classes/guest/guestOrder.dart';
 import 'package:mainguyen/classes/sell/sellProductClass.dart';
 import 'package:mainguyen/enum/product/productEnum.dart';
+import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/pages/bill.dart';
 import 'package:mainguyen/utils/screenSize.dart';
@@ -28,6 +29,7 @@ class _SaleProductsState extends State<SaleProducts> {
   @override
   late List<Product> _options = [];
   late Box _productBox;
+
   late List<SellProduct> _productSellOriginal = [];
   GuestOrder _guestOrder = GuestOrder();
 
@@ -44,12 +46,12 @@ class _SaleProductsState extends State<SaleProducts> {
 
   Future _openBox() async {
     _productBox = await Hive.openBox('product');
-    _productBox.length;
     _options = [];
+
     for (var i = 0; i < _productBox.length; i++) {
       _options.add(_productBox.getAt(i));
     }
-    print("OPTION $_options");
+
     setState(() {});
     return;
   }
@@ -184,85 +186,104 @@ class _SaleProductsState extends State<SaleProducts> {
                 width: screenSizeWithoutContext.width,
                 child: Column(
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 10),
-                        child: AutocompleteField(
-                          options: _options,
-                          label: "Nhập hàng cần bán",
-                          callback: (Product product) {
-                            if (_productSellOriginal.isNotEmpty) {
-                              bool check = checkAddElementOrder(
-                                  _productSellOriginal, product);
-                              if (!check) {
-                                setState(() {
-                                  _productOrders.add(SellProduct(
-                                      id: product.id,
-                                      amount: 1,
-                                      type: product.type,
-                                      price: product.price,
-                                      image: product.imageProduct,
-                                      productName: product.productName));
-                                  _productSellOriginal.add(SellProduct(
-                                      productName: product.productName,
-                                      id: product.id,
-                                      amount: product.amount,
-                                      type: product.type,
-                                      price: product.price,
-                                      image: product.imageProduct));
-                                });
-                              }
-                              // _productSellOriginal.forEach((element) {
-                              //   if (element.id != product.id) {
-                              //     return "1";
-                              //   }
-                              // });
-                            } else {
-                              setState(() {
-                                _productOrders.add(SellProduct(
-                                    id: product.id,
-                                    amount: 1,
-                                    type: product.type,
-                                    price: product.price,
-                                    image: product.imageProduct,
-                                    productName: product.productName));
-                                _productSellOriginal.add(SellProduct(
-                                    productName: product.productName,
-                                    id: product.id,
-                                    amount: product.amount,
-                                    type: product.type,
-                                    price: product.price,
-                                    image: product.imageProduct));
-                              });
-                            }
-                          },
-                        )),
                     Form(
-                      key: _formKey,
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 10),
-                          child: SizedBox(
-                              height: 80,
-                              child: InputDecorator(
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  label: Text("Tên người mua"),
-                                ),
-                                child: TextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Vui lòng tên người mua';
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                child: AutocompleteFieldSell(
+                                  options: _options,
+                                  label: "Nhập hàng cần bán",
+                                  callback: (Product product) {
+                                    if (_productSellOriginal.isNotEmpty) {
+                                      bool check = checkAddElementOrder(
+                                          _productSellOriginal, product);
+                                      if (!check) {
+                                        setState(() {
+                                          _productOrders.add(SellProduct(
+                                              id: product.id,
+                                              amount: 1,
+                                              type: product.type,
+                                              price: product.price,
+                                              image: product.imageProduct,
+                                              productName:
+                                                  product.productName));
+                                          _productSellOriginal.add(SellProduct(
+                                              productName: product.productName,
+                                              id: product.id,
+                                              amount: product.amount,
+                                              type: product.type,
+                                              price: product.price,
+                                              image: product.imageProduct));
+                                        });
+                                      }
+                                      // _productSellOriginal.forEach((element) {
+                                      //   if (element.id != product.id) {
+                                      //     return "1";
+                                      //   }
+                                      // });
+                                    } else {
+                                      setState(() {
+                                        _productOrders.add(SellProduct(
+                                            id: product.id,
+                                            amount: 1,
+                                            type: product.type,
+                                            price: product.price,
+                                            image: product.imageProduct,
+                                            productName: product.productName));
+                                        _productSellOriginal.add(SellProduct(
+                                            productName: product.productName,
+                                            id: product.id,
+                                            amount: product.amount,
+                                            type: product.type,
+                                            price: product.price,
+                                            image: product.imageProduct));
+                                      });
                                     }
-                                    return null;
                                   },
-                                  onChanged: (value) =>
-                                      {_guestOrder.guestName = value},
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none),
-                                ),
-                              ))),
-                    ),
+                                )),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                child: AutocompleteFieldGuestSell(
+                                    callbackSelect: (GuestModel guest) {
+                                  _guestOrder = GuestOrder(
+                                      guestName: guest.guestName,
+                                      phoneNumber: guest.guestPhoneNumber,
+                                      address: guest.guestAddress);
+                                }, callbackSubmit: (String value) {
+                                  print("value $value");
+                                  _guestOrder.guestName = value;
+                                })),
+                          ],
+                        )
+
+                        // Padding(
+                        //     padding: const EdgeInsets.symmetric(
+                        //         horizontal: 8, vertical: 10),
+                        //     child: SizedBox(
+                        //         height: 80,
+                        //         child: InputDecorator(
+                        //           decoration: const InputDecoration(
+                        //             border: OutlineInputBorder(),
+                        //             label: Text("Tên người mua"),
+                        //           ),
+                        //           child: TextFormField(
+                        //             validator: (value) {
+                        //               if (value == null || value.isEmpty) {
+                        //                 return 'Vui lòng tên người mua';
+                        //               }
+                        //               return null;
+                        //             },
+                        //             onChanged: (value) =>
+                        //                 {_guestOrder.guestName = value},
+                        //             decoration: const InputDecoration(
+                        //                 border: InputBorder.none),
+                        //           ),
+                        //         ))),
+                        ),
                     Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 10),
@@ -321,15 +342,26 @@ class _SaleProductsState extends State<SaleProducts> {
                                 ),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => BillPage(
-                                                guestOrder: _guestOrder,
-                                                listProductOrder:
-                                                    _productOrders,
-                                              )),
-                                    );
+                                    if (_productOrders.isEmpty) {
+                                      Fluttertoast.showToast(
+                                          msg: "Vui lòng chọn hàng cần bán ",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 10,
+                                          backgroundColor: Colors.red,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0);
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => BillPage(
+                                                  guestOrder: _guestOrder,
+                                                  listProductOrder:
+                                                      _productOrders,
+                                                )),
+                                      );
+                                    }
                                   }
                                 },
                                 icon: Icon(Icons.next_plan),
@@ -354,15 +386,16 @@ class _SaleProductsState extends State<SaleProducts> {
   }
 }
 
-class AutocompleteField extends StatelessWidget {
-  AutocompleteField(
-      {super.key,
-      required List<Product> options,
-      required this.label,
-      required this.callback})
-      : _options = options;
+class AutocompleteFieldSell extends StatelessWidget {
+  AutocompleteFieldSell({
+    super.key,
+    required List<Product> options,
+    required this.label,
+    required this.callback,
+  }) : _options = options;
 
   final List<Product> _options;
+
   final String label;
   final void Function(Product) callback;
 
@@ -422,13 +455,8 @@ class AutocompleteField extends StatelessWidget {
                               onTap: () {
                                 // onSelected(option);
                                 callback(product);
+
                                 UtilsFunction().closeKeyboard();
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) =>
-                                //           ProductDetails(product: product)),
-                                // );
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
@@ -443,6 +471,143 @@ class AutocompleteField extends StatelessWidget {
                                             MemoryImage(product.imageProduct)),
                                     title: Text(
                                       "Sản phẩm: ${product.productName}",
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ),
+                              )
+
+                              // ListTile(
+                              //   title: Text(option.productName),
+                              // ),
+                              );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            )));
+  }
+}
+
+class AutocompleteFieldGuestSell extends StatefulWidget {
+  AutocompleteFieldGuestSell(
+      {super.key, required this.callbackSelect, required this.callbackSubmit});
+  final void Function(GuestModel) callbackSelect;
+  final void Function(String) callbackSubmit;
+
+  @override
+  _AutocompleteFieldGuestSellState createState() =>
+      _AutocompleteFieldGuestSellState();
+}
+
+class _AutocompleteFieldGuestSellState
+    extends State<AutocompleteFieldGuestSell> {
+  List<GuestModel> options = [];
+  late Box _guestBox;
+
+  final TextEditingController _textEditingController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  String label = "Nhập khách hàng cần bán ";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _openGuestModel();
+  }
+
+  Future _openGuestModel() async {
+    _guestBox = await Hive.openBox('guest');
+    for (var i = 0; i < _guestBox.length; i++) {
+      options.add(_guestBox.getAt(i));
+    }
+    setState(() {});
+    return;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: 80,
+        child: InputDecorator(
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                label: Text(label),
+                filled: true,
+                fillColor: Colors.white,
+                prefix: const Icon(
+                  Icons.search,
+                  color: Colors.black,
+                )),
+            child: RawAutocomplete<GuestModel>(
+              focusNode: _focusNode,
+              textEditingController: _textEditingController,
+              optionsBuilder: (TextEditingValue textEditingValue) {
+                return options.where((GuestModel guest) {
+                  return guest.guestName
+                      .contains(textEditingValue.text.toLowerCase());
+                });
+              },
+              fieldViewBuilder: (BuildContext context,
+                  TextEditingController textEditingController,
+                  FocusNode focusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextFormField(
+                  // initialValue: valueAdd,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Vui lòng nhập tên người mua hàng';
+                    }
+                    return null;
+                  },
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(border: InputBorder.none),
+                  onFieldSubmitted: (String value) {
+                    print("CALLLL");
+                    widget.callbackSubmit(value);
+                  },
+                );
+              },
+              optionsViewBuilder: (BuildContext context,
+                  AutocompleteOnSelected<GuestModel> onSelected,
+                  Iterable<GuestModel> options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4.0,
+                    child: Container(
+                      height: 200.0,
+                      width: screenSizeWithoutContext.width / 3.4,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final GuestModel guest = options.elementAt(index);
+                          return GestureDetector(
+                              onTap: () {
+                                // onSelected(option);
+                                _textEditingController.text = guest.guestName;
+                                widget.callbackSelect(guest);
+                                UtilsFunction().closeKeyboard();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Card(
+                                  child: ListTile(
+                                    // subtitle: Text(
+                                    //     "Vị trí: ${product.location}",
+                                    //     style: const TextStyle(fontSize: 12)),
+                                    // leading: Image(
+                                    //     height: 50,
+                                    //     image:
+                                    //         MemoryImage(product.imageProduct)),
+                                    title: Text(
+                                      "Khách hàng: ${guest.guestName}",
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ),
