@@ -17,7 +17,7 @@ class GuestModelAdapter extends TypeAdapter<GuestModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return GuestModel(
-      orderedID: fields[0] as String?,
+      guestID: fields[0] as String,
       guestName: fields[1] as String,
       guestPhoneNumber: fields[2] as String,
       avatar: fields[3] as Uint8List?,
@@ -31,7 +31,7 @@ class GuestModelAdapter extends TypeAdapter<GuestModel> {
     writer
       ..writeByte(6)
       ..writeByte(0)
-      ..write(obj.orderedID)
+      ..write(obj.guestID)
       ..writeByte(1)
       ..write(obj.guestName)
       ..writeByte(2)

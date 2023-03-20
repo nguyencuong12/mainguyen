@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/guest/guestModel.dart';
+import 'package:mainguyen/pages/guestSold.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/emptyWidget.dart';
@@ -65,6 +66,15 @@ class _GuestPageState extends State<GuestPage> {
                         padding: const EdgeInsets.only(
                             top: 10, bottom: 10, left: 20, right: 20),
                         child: ListTile(
+                          onTap: () => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => GuestSoldWidget(
+                                        guestInfo: _guestList[i],
+                                      )),
+                            )
+                          },
                           onLongPress: () => {
                             getDeleteDialog(context,
                                 () => {_guestBox.deleteAt(i), _openBox()})

@@ -17,14 +17,14 @@ enum GuestTypeEnum {
 @HiveType(typeId: 7)
 class GuestModel {
   GuestModel(
-      {this.orderedID,
+      {required this.guestID,
       required this.guestName,
       required this.guestPhoneNumber,
       this.avatar,
       this.guestAddress,
       required this.guestType});
   @HiveField(0)
-  String? orderedID;
+  String guestID;
   @HiveField(1)
   String guestName;
   @HiveField(2)

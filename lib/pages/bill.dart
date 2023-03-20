@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/classes/guest/guestOrder.dart';
 import 'package:mainguyen/classes/sell/sellProductClass.dart';
+import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
@@ -241,27 +242,70 @@ class _BillPageState extends State<BillPage> {
                                 }
                               }
                             }
+
                             _soldOrdered = await Hive.openBox('soldOrdered');
-                            _soldOrdered.add(SoldOrderedModel(
-                                id: Uuid().v4(),
-                                image: _imageBytes!,
-                                guestOrder: widget.guestOrder.guestName!,
-                                guestAddress: widget.guestOrder.address,
-                                guestPhoneNumber: widget.guestOrder.phoneNumber,
-                                soldOrdered: [
-                                  for (var i = 0;
-                                      i < widget.listProductOrder.length;
-                                      i++) ...[
-                                    OrderProductDescription(
-                                        id: widget.listProductOrder[i].id,
-                                        amount:
-                                            widget.listProductOrder[i].amount,
-                                        type: widget.listProductOrder[i].type,
-                                        price: widget.listProductOrder[i].price,
-                                        productName: widget
-                                            .listProductOrder[i].productName)
-                                  ]
-                                ]));
+
+                            Box guestBox = await Hive.openBox('guest');
+                            if (widget.guestOrder.id == null) {
+                              var idGuestGen = Uuid().v4();
+                              guestBox.add(GuestModel(
+                                  guestName: widget.guestOrder.guestName!,
+                                  guestPhoneNumber:
+                                      widget.guestOrder.phoneNumber ?? "",
+                                  guestType: GuestTypeEnum.guestNormal,
+                                  guestID: idGuestGen,
+                                  avatar: null,
+                                  guestAddress:
+                                      widget.guestOrder.address ?? ""));
+                              _soldOrdered.add(SoldOrderedModel(
+                                  idGuestOrder: idGuestGen,
+                                  id: Uuid().v4(),
+                                  image: _imageBytes!,
+                                  guestOrder: widget.guestOrder.guestName ?? "",
+                                  guestAddress: widget.guestOrder.address ?? "",
+                                  guestPhoneNumber:
+                                      widget.guestOrder.phoneNumber ?? "",
+                                  soldOrdered: [
+                                    for (var i = 0;
+                                        i < widget.listProductOrder.length;
+                                        i++) ...[
+                                      OrderProductDescription(
+                                          id: widget.listProductOrder[i].id,
+                                          amount:
+                                              widget.listProductOrder[i].amount,
+                                          type: widget.listProductOrder[i].type,
+                                          price:
+                                              widget.listProductOrder[i].price,
+                                          productName: widget
+                                              .listProductOrder[i].productName)
+                                    ]
+                                  ]));
+                            } else {
+                              _soldOrdered.add(SoldOrderedModel(
+                                  idGuestOrder: widget.guestOrder.id ?? "",
+                                  id: Uuid().v4(),
+                                  image: _imageBytes!,
+                                  guestOrder: widget.guestOrder.guestName!,
+                                  guestAddress: widget.guestOrder.address,
+                                  guestPhoneNumber:
+                                      widget.guestOrder.phoneNumber,
+                                  soldOrdered: [
+                                    for (var i = 0;
+                                        i < widget.listProductOrder.length;
+                                        i++) ...[
+                                      OrderProductDescription(
+                                          id: widget.listProductOrder[i].id,
+                                          amount:
+                                              widget.listProductOrder[i].amount,
+                                          type: widget.listProductOrder[i].type,
+                                          price:
+                                              widget.listProductOrder[i].price,
+                                          productName: widget
+                                              .listProductOrder[i].productName)
+                                    ]
+                                  ]));
+                            }
+
                             setState(() {
                               Fluttertoast.showToast(
                                   msg: "Đã tạo đơn hàng thành công !! ",
@@ -274,11 +318,6 @@ class _BillPageState extends State<BillPage> {
 
                               Navigator.of(context)
                                   .popUntil((route) => route.isFirst);
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) =>
-                              //             const SoldOrders()));
                             });
                           },
                           icon: Icon(Icons.done),

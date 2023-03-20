@@ -6,7 +6,7 @@ class GuestOrderModelClass {
   String? guestName;
   String? phoneNumber;
   String? address;
-  String orderedId;
+  String guestID;
   Uint8List? avatar;
   GuestTypeEnum type;
 
@@ -14,7 +14,7 @@ class GuestOrderModelClass {
       {this.guestName,
       this.phoneNumber,
       this.address,
-      required this.orderedId,
+      required this.guestID,
       required this.type,
       this.avatar});
   @override

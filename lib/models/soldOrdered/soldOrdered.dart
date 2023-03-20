@@ -27,13 +27,16 @@ class OrderProductDescription {
 
 @HiveType(typeId: 4)
 class SoldOrderedModel {
-  SoldOrderedModel(
-      {required this.image,
-      required this.guestOrder,
-      this.guestPhoneNumber,
-      this.guestAddress,
-      required this.soldOrdered,
-      required this.id});
+  SoldOrderedModel({
+    required this.image,
+    required this.guestOrder,
+    this.guestPhoneNumber,
+    this.guestAddress,
+    required this.soldOrdered,
+    required this.id,
+    this.idGuestOrder,
+  });
+
   @HiveField(0)
   Uint8List image;
   @HiveField(1)
@@ -46,6 +49,8 @@ class SoldOrderedModel {
   List<OrderProductDescription> soldOrdered;
   @HiveField(5)
   String id;
+  @HiveField(6)
+  String? idGuestOrder;
   @override
   String toString() => "GUEST NAME: $guestOrder";
 }

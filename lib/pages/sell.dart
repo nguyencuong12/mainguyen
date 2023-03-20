@@ -56,20 +56,32 @@ class _SaleProductsState extends State<SaleProducts> {
     return;
   }
 
-  SizedBox renderTextField(String label, bool typeNumber, Function onSubmit) {
-    return SizedBox(
-        height: 80,
-        child: InputDecorator(
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            label: Text(label),
-          ),
-          child: TextField(
-            onChanged: (value) => {onSubmit(value)},
-            keyboardType: typeNumber ? TextInputType.phone : TextInputType.text,
-            decoration: InputDecoration(border: InputBorder.none),
-          ),
-        ));
+  renderTextField(
+      String label, bool typeNumber, Function onSubmit, String value) {
+    final TextEditingController _textEditingController =
+        TextEditingController();
+    if (value != "") {
+      _textEditingController.text = value;
+    }
+    return Column(
+      children: [
+        SizedBox(
+            height: 80,
+            child: InputDecorator(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                label: Text(label),
+              ),
+              child: TextField(
+                controller: _textEditingController,
+                onChanged: (value) => {onSubmit(value)},
+                keyboardType:
+                    typeNumber ? TextInputType.phone : TextInputType.text,
+                decoration: InputDecoration(border: InputBorder.none),
+              ),
+            ))
+      ],
+    );
   }
 
   renderType(ProductEnumHive type) {
@@ -197,10 +209,48 @@ class _SaleProductsState extends State<SaleProducts> {
                                   options: _options,
                                   label: "Nhập hàng cần bán",
                                   callback: (Product product) {
-                                    if (_productSellOriginal.isNotEmpty) {
-                                      bool check = checkAddElementOrder(
-                                          _productSellOriginal, product);
-                                      if (!check) {
+                                    if (product.amount <= 0) {
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "Hết hàng vui lòng nhập thêm hàng !! ",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 10,
+                                          backgroundColor: Colors.red,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0);
+                                    } else {
+                                      if (_productSellOriginal.isNotEmpty) {
+                                        bool check = checkAddElementOrder(
+                                            _productSellOriginal, product);
+                                        if (!check) {
+                                          setState(() {
+                                            _productOrders.add(SellProduct(
+                                                id: product.id,
+                                                amount: 1,
+                                                type: product.type,
+                                                price: product.price,
+                                                image: product.imageProduct,
+                                                productName:
+                                                    product.productName));
+                                            _productSellOriginal.add(
+                                                SellProduct(
+                                                    productName:
+                                                        product.productName,
+                                                    id: product.id,
+                                                    amount: product.amount,
+                                                    type: product.type,
+                                                    price: product.price,
+                                                    image:
+                                                        product.imageProduct));
+                                          });
+                                        }
+                                        // _productSellOriginal.forEach((element) {
+                                        //   if (element.id != product.id) {
+                                        //     return "1";
+                                        //   }
+                                        // });
+                                      } else {
                                         setState(() {
                                           _productOrders.add(SellProduct(
                                               id: product.id,
@@ -219,28 +269,6 @@ class _SaleProductsState extends State<SaleProducts> {
                                               image: product.imageProduct));
                                         });
                                       }
-                                      // _productSellOriginal.forEach((element) {
-                                      //   if (element.id != product.id) {
-                                      //     return "1";
-                                      //   }
-                                      // });
-                                    } else {
-                                      setState(() {
-                                        _productOrders.add(SellProduct(
-                                            id: product.id,
-                                            amount: 1,
-                                            type: product.type,
-                                            price: product.price,
-                                            image: product.imageProduct,
-                                            productName: product.productName));
-                                        _productSellOriginal.add(SellProduct(
-                                            productName: product.productName,
-                                            id: product.id,
-                                            amount: product.amount,
-                                            type: product.type,
-                                            price: product.price,
-                                            image: product.imageProduct));
-                                      });
                                     }
                                   },
                                 )),
@@ -249,12 +277,14 @@ class _SaleProductsState extends State<SaleProducts> {
                                     horizontal: 8, vertical: 10),
                                 child: AutocompleteFieldGuestSell(
                                     callbackSelect: (GuestModel guest) {
+                                  setState(() {});
                                   _guestOrder = GuestOrder(
+                                      id: guest.guestID,
                                       guestName: guest.guestName,
                                       phoneNumber: guest.guestPhoneNumber,
                                       address: guest.guestAddress);
                                 }, callbackSubmit: (String value) {
-                                  print("value $value");
+                                  setState(() {});
                                   _guestOrder.guestName = value;
                                 })),
                           ],
@@ -285,21 +315,25 @@ class _SaleProductsState extends State<SaleProducts> {
                         //         ))),
                         ),
                     Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 10),
-                        child: renderTextField(
-                            "SDT người mua",
-                            true,
-                            (submitValue) =>
-                                {_guestOrder.phoneNumber = submitValue})),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 10),
+                      child: renderTextField(
+                          "SDT người mua",
+                          true,
+                          (submitValue) =>
+                              {_guestOrder.phoneNumber = submitValue},
+                          _guestOrder.phoneNumber ?? ""),
+                    ),
                     Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 10),
                         child: renderTextField(
                             "Địa chỉ giao hàng",
                             false,
-                            (submitValue) =>
-                                {_guestOrder.address = submitValue})),
+                            (submitValue) => {
+                                  _guestOrder.address = submitValue,
+                                },
+                            _guestOrder.address ?? "")),
                     SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: DataTable(
@@ -527,6 +561,19 @@ class _AutocompleteFieldGuestSellState
     return;
   }
 
+  renderType(GuestTypeEnum type) {
+    switch (type) {
+      case GuestTypeEnum.dearCustomer:
+        return "Thân thiết";
+
+      case GuestTypeEnum.guestNormal:
+        return "Vãng lai";
+
+      case GuestTypeEnum.vip:
+        return "VIP";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -599,13 +646,27 @@ class _AutocompleteFieldGuestSellState
                                 padding: const EdgeInsets.all(4.0),
                                 child: Card(
                                   child: ListTile(
-                                    // subtitle: Text(
-                                    //     "Vị trí: ${product.location}",
+                                    trailing: Container(
+                                        clipBehavior: Clip.none,
+                                        padding: const EdgeInsets.only(
+                                            top: 8,
+                                            bottom: 8,
+                                            left: 15,
+                                            right: 15),
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        child: Text(renderType(guest.guestType),
+                                            style: TextStyle(
+                                                color: Colors.white))),
+                                    // subtitle: Text("Vị trí: ",
                                     //     style: const TextStyle(fontSize: 12)),
-                                    // leading: Image(
-                                    //     height: 50,
-                                    //     image:
-                                    //         MemoryImage(product.imageProduct)),
+                                    leading: guest.avatar != null
+                                        ? Image(
+                                            height: 50,
+                                            image: MemoryImage(guest.avatar!))
+                                        : null,
                                     title: Text(
                                       "Khách hàng: ${guest.guestName}",
                                       style: const TextStyle(fontSize: 12),

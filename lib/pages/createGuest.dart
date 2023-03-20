@@ -24,7 +24,7 @@ class _CreateGuestState extends State<CreateGuest> {
   final ImagePicker picker = ImagePicker();
 
   final GuestOrderModelClass _guestOrder = GuestOrderModelClass(
-      orderedId: Uuid().v4(), type: GuestTypeEnum.guestNormal);
+      guestID: Uuid().v4(), type: GuestTypeEnum.guestNormal);
   final _formKey = GlobalKey<FormState>();
 
   Future getImage(ImageSource media) async {
@@ -165,7 +165,7 @@ class _CreateGuestState extends State<CreateGuest> {
                                   guestName: _guestOrder.guestName!,
                                   guestPhoneNumber: _guestOrder.phoneNumber!,
                                   guestType: _guestOrder.type,
-                                  orderedID: _guestOrder.orderedId,
+                                  guestID: _guestOrder.guestID,
                                   avatar: _guestOrder.avatar,
                                   guestAddress: _guestOrder.address));
                             }

@@ -94,11 +94,12 @@ class _ProductDetailsState extends State<ProductDetails> {
                         title: "Giá sản phẩm:",
                         content: UtilsFunction().formatCurrency(product.price),
                         color: Colors.red),
+
                     renderRowVer1(
-                      title: "Số lượng còn trong kho:",
-                      content:
-                          "${product.amount.toString()} ${renderType(product.type)}",
-                    ),
+                        title: "Số lượng còn trong kho:",
+                        content:
+                            "${product.amount.toString()} ${renderType(product.type)}"),
+
                     renderRowVer1(
                         title: "Vị trí hàng trong kho:",
                         content: product.location,
@@ -108,6 +109,24 @@ class _ProductDetailsState extends State<ProductDetails> {
                       title: "Ngày nhập sản phẩm:",
                       content: UtilsFunction().formatDateTime(product.date),
                     ),
+
+                    SizedBox(height: 15),
+                    product.amount <= 0
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                                width: 100,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: Text(
+                                  "Hết hàng",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )))
+                        : Text(""),
+
                     // Padding(
                     //     child: Divider(height: 4),
                     //     padding: EdgeInsets.symmetric(vertical: 15)),
@@ -125,11 +144,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             title: Text("Chi tiết sản phẩm",
                 style: TextStyle(fontSize: TextSize().getLabelTextSize())),
             widgetActions: [
-              IconButton(
-                  onPressed: () {
-                    print("AA");
-                  },
-                  icon: Icon(Icons.edit))
+              IconButton(onPressed: () {}, icon: Icon(Icons.edit))
             ]),
         body: Stack(
           children: [

@@ -146,18 +146,31 @@ class _OurOfStockState extends State<OurOfStock> {
                               children: [
                                 Text("Trạng thái:"),
                                 SizedBox(width: 10),
-                                Container(
-                                    width: 100,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
-                                    child: Text(
-                                      "Sắp hết hàng",
-                                      style: TextStyle(color: Colors.white),
-                                      textAlign: TextAlign.center,
-                                    ))
+                                getOurOfStock()[i].amount <= 0
+                                    ? Container(
+                                        width: 100,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        child: Text(
+                                          "Hết hàng",
+                                          style: TextStyle(color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ))
+                                    : Container(
+                                        width: 100,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            borderRadius:
+                                                BorderRadius.circular(30)),
+                                        child: Text(
+                                          "Sắp hết hàng",
+                                          style: TextStyle(color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ))
                               ],
                             ),
                             SizedBox(height: 10),

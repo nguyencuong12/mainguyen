@@ -70,13 +70,14 @@ class SoldOrderedModelAdapter extends TypeAdapter<SoldOrderedModel> {
       guestAddress: fields[3] as String?,
       soldOrdered: (fields[4] as List).cast<OrderProductDescription>(),
       id: fields[5] as String,
+      idGuestOrder: fields[6] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, SoldOrderedModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.image)
       ..writeByte(1)
@@ -88,7 +89,9 @@ class SoldOrderedModelAdapter extends TypeAdapter<SoldOrderedModel> {
       ..writeByte(4)
       ..write(obj.soldOrdered)
       ..writeByte(5)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.idGuestOrder);
   }
 
   @override
