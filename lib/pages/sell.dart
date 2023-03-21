@@ -288,32 +288,7 @@ class _SaleProductsState extends State<SaleProducts> {
                                   _guestOrder.guestName = value;
                                 })),
                           ],
-                        )
-
-                        // Padding(
-                        //     padding: const EdgeInsets.symmetric(
-                        //         horizontal: 8, vertical: 10),
-                        //     child: SizedBox(
-                        //         height: 80,
-                        //         child: InputDecorator(
-                        //           decoration: const InputDecoration(
-                        //             border: OutlineInputBorder(),
-                        //             label: Text("Tên người mua"),
-                        //           ),
-                        //           child: TextFormField(
-                        //             validator: (value) {
-                        //               if (value == null || value.isEmpty) {
-                        //                 return 'Vui lòng tên người mua';
-                        //               }
-                        //               return null;
-                        //             },
-                        //             onChanged: (value) =>
-                        //                 {_guestOrder.guestName = value},
-                        //             decoration: const InputDecoration(
-                        //                 border: InputBorder.none),
-                        //           ),
-                        //         ))),
-                        ),
+                        )),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 10),
@@ -612,8 +587,8 @@ class _AutocompleteFieldGuestSellState
                   controller: textEditingController,
                   focusNode: focusNode,
                   decoration: InputDecoration(border: InputBorder.none),
-                  onFieldSubmitted: (String value) {
-                    print("CALLLL");
+
+                  onChanged: (String value) {
                     widget.callbackSubmit(value);
                   },
                 );

@@ -1,8 +1,13 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mainguyen/appbar/appbar.dart';
+import 'package:mainguyen/classes/product/product.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
@@ -20,6 +25,9 @@ class ProductDetails extends StatefulWidget {
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
+  ProductClass productEdit = ProductClass();
+  late Product product = widget.product;
+
   Divider getDivider() {
     return const Divider(
       height: 30,
@@ -30,10 +38,37 @@ class _ProductDetailsState extends State<ProductDetails> {
     );
   }
 
+  XFile? image;
+  final ImagePicker picker = ImagePicker();
+  // late Uint8List _imageMemory = Uint8List(0);
+
+  Future getImage(ImageSource media) async {
+    var img = await picker.pickImage(source: media);
+    image = img;
+    product.imageProduct = (await image?.readAsBytes())!;
+    await _openBox();
+  }
+
   @override
   void initState() {
     // print("AA ${eurosInUSFormat.format(1000000.0)}");
+    productEdit.price = widget.product.price;
+    productEdit.amount = widget.product.amount;
+    productEdit.location = widget.product.location;
+
     super.initState();
+  }
+
+  Future _openBox() async {
+    Box productBox = await Hive.openBox('product');
+    for (var i = 0; i < productBox.length; i++) {
+      Product temp = productBox.getAt(i);
+      if (temp.id == product.id) {
+        product = temp;
+      }
+    }
+    setState(() {});
+    return;
   }
 
   renderType(ProductEnumHive type) {
@@ -136,6 +171,34 @@ class _ProductDetailsState extends State<ProductDetails> {
         });
   }
 
+  renderTextField(
+      String label, bool typeNumber, Function onSubmit, String value) {
+    final TextEditingController _textEditingController =
+        TextEditingController();
+    if (value != "") {
+      _textEditingController.text = value;
+    }
+    return Column(
+      children: [
+        SizedBox(
+            height: 80,
+            child: InputDecorator(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                label: Text(label),
+              ),
+              child: TextField(
+                controller: _textEditingController,
+                onChanged: (value) => {onSubmit(value)},
+                keyboardType:
+                    typeNumber ? TextInputType.phone : TextInputType.text,
+                decoration: InputDecoration(border: InputBorder.none),
+              ),
+            ))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,13 +207,197 @@ class _ProductDetailsState extends State<ProductDetails> {
             title: Text("Chi tiết sản phẩm",
                 style: TextStyle(fontSize: TextSize().getLabelTextSize())),
             widgetActions: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.edit))
+              IconButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: Text(
+                                "Chỉnh sửa",
+                                textAlign: TextAlign.center,
+                              ),
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0))),
+                              content: Builder(
+                                builder: (context) {
+                                  // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                                  var height =
+                                      MediaQuery.of(context).size.height;
+                                  var width = MediaQuery.of(context).size.width;
+                                  return SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: Container(
+                                        height: height - 200,
+                                        width: width - 10,
+                                        child: Column(
+                                          children: [
+                                            renderTextField(
+                                                "Giá sản phẩm",
+                                                true,
+                                                (value) => {
+                                                      productEdit.price =
+                                                          int.parse(value),
+                                                    },
+                                                productEdit.price.toString()),
+                                            SizedBox(height: 20),
+                                            renderTextField(
+                                                "Số lượng trong kho",
+                                                true,
+                                                (value) => {
+                                                      productEdit.amount =
+                                                          double.parse(value)
+                                                    },
+                                                productEdit.amount.toString()),
+                                            SizedBox(height: 20),
+                                            renderTextField(
+                                                "Vị trí trong kho",
+                                                false,
+                                                (value) => {
+                                                      productEdit.location =
+                                                          value
+                                                    },
+                                                productEdit.location
+                                                    .toString()),
+                                            SizedBox(height: 20),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                ElevatedButton.icon(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors
+                                                        .green, // background
+                                                    onPrimary: Colors
+                                                        .white, // foreground
+                                                  ),
+                                                  // onPressed: () async {
+                                                  //   handleSubmit();
+                                                  // },
+                                                  onPressed: () async => {
+                                                    product.amount =
+                                                        productEdit.amount!,
+                                                    product.price =
+                                                        productEdit.price!,
+                                                    product.location =
+                                                        productEdit.location!,
+                                                    await _openBox(),
+                                                    Fluttertoast.showToast(
+                                                        msg: "Đã chỉnh sửa ",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.CENTER,
+                                                        timeInSecForIosWeb: 10,
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        textColor: Colors.white,
+                                                        fontSize: 16.0),
+                                                    Navigator.pop(context)
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.done,
+                                                    size: 24.0,
+                                                  ),
+                                                  label: Text(
+                                                      'Hoàn thành'), // <-- Text
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                ElevatedButton.icon(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors
+                                                        .red, // background
+                                                    onPrimary: Colors
+                                                        .white, // foreground
+                                                  ),
+                                                  onPressed: () async {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.close,
+                                                    size: 24.0,
+                                                  ),
+
+                                                  label:
+                                                      Text('Hủy'), // <-- Text
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        )),
+                                  );
+                                },
+                              ),
+                            ));
+                    // showDialog(
+                    //     context: context,
+                    //     builder: (_) {
+                    //       return AlertDialog(
+                    //           title: Text("Chỉnh sửa"),
+                    //           insetPadding: EdgeInsets.zero,
+                    //           content: Column(
+                    //             children: [
+                    //               renderTextField(
+                    //                   "Giá sản phẩm", false, () => {}, "")
+                    //             ],
+                    //           ));
+                    //     });
+                  },
+                  icon: Icon(Icons.edit))
             ]),
         body: Stack(
           children: [
-            SizedBox(
-                width: double.infinity,
-                child: Image.memory(widget.product.imageProduct)),
+            InkWell(
+              onTap: () => {
+                showDialog(
+                    context: context,
+                    builder: (_) {
+                      return AlertDialog(
+                        insetPadding: EdgeInsets.symmetric(vertical: 220),
+                        content: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              //if user click this button, user can upload image from gallery
+                              onPressed: () {
+                                Navigator.pop(context);
+                                getImage(ImageSource.gallery);
+                              },
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.image),
+                                  SizedBox(width: 10),
+                                  Text('Chọn ảnh từ điện thoại'),
+                                ],
+                              ),
+                            ),
+                            ElevatedButton(
+                              //if user click this button, user can upload image from gallery
+                              onPressed: () {
+                                Navigator.pop(context);
+                                getImage(ImageSource.camera);
+                              },
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.image),
+                                  SizedBox(width: 10),
+                                  Text('Chụp ảnh'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    })
+              },
+              child: SizedBox(
+                  width: double.infinity,
+                  child: Image.memory(product.imageProduct)),
+            ),
             scroll(widget.product)
           ],
         )

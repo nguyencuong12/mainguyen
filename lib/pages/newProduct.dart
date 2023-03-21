@@ -398,18 +398,7 @@ class _NewProductState extends State<NewProduct> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () async {
-                            // var box = await Hive.openBox('product');
-                            // box.clear();
-
                             Navigator.pop(context);
-
-                            // box.length;
-                            // Product b = box.getAt(0);
-                            // print("IMAGE ${b.imageProduct}");
-                            // a.clear();
-                            // print("LENGTH ${a.length}");
-                            // Product b = a.getAt(0);
-                            // print("B ${b.location}");
                           },
                           icon: const Icon(
                             Icons.close,

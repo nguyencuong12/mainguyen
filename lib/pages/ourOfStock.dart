@@ -37,6 +37,7 @@ class _OurOfStockState extends State<OurOfStock> {
   Future _openBox() async {
     _productBox = await Hive.openBox('product');
     // _soldOrderedBox.clear();
+    _products = [];
     for (var i = 0; i < _productBox.length; i++) {
       _products.add(_productBox.getAt(i));
     }
@@ -179,14 +180,16 @@ class _OurOfStockState extends State<OurOfStock> {
                                   primary: Colors.green, // background
                                   onPrimary: Colors.white, // foreground
                                 ),
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => InputProduct(
                                               initOrder: getOurOfStock()[i],
                                             )),
                                   );
+
+                                  await _openBox();
                                 },
                                 icon: Icon(Icons.next_plan),
                                 label: Text("Nhập hàng")),

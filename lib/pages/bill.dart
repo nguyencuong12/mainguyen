@@ -234,91 +234,107 @@ class _BillPageState extends State<BillPage> {
                             onPrimary: Colors.white, // foreground
                           ),
                           onPressed: () async {
-                            _imageBytes = await controller.capture();
-                            for (var element in _productsInDB) {
-                              for (var order in widget.listProductOrder) {
-                                if (element.id == order.id) {
-                                  element.amount -= order.amount;
+                            if (widget.guestOrder.guestName != null) {
+                              _imageBytes = await controller.capture();
+                              for (var element in _productsInDB) {
+                                for (var order in widget.listProductOrder) {
+                                  if (element.id == order.id) {
+                                    element.amount -= order.amount;
+                                  }
                                 }
                               }
-                            }
 
-                            _soldOrdered = await Hive.openBox('soldOrdered');
+                              _soldOrdered = await Hive.openBox('soldOrdered');
+                              Box guestBox = await Hive.openBox('guest');
+                              if (widget.guestOrder.id == null) {
+                                var idGuestGen = Uuid().v4();
+                                guestBox.add(GuestModel(
+                                    guestName: widget.guestOrder.guestName!,
+                                    guestPhoneNumber:
+                                        widget.guestOrder.phoneNumber ?? "",
+                                    guestType: GuestTypeEnum.guestNormal,
+                                    guestID: idGuestGen,
+                                    avatar: null,
+                                    guestAddress:
+                                        widget.guestOrder.address ?? ""));
+                                _soldOrdered.add(SoldOrderedModel(
+                                    idGuestOrder: idGuestGen,
+                                    id: Uuid().v4(),
+                                    image: _imageBytes!,
+                                    guestOrder:
+                                        widget.guestOrder.guestName ?? "",
+                                    guestAddress:
+                                        widget.guestOrder.address ?? "",
+                                    guestPhoneNumber:
+                                        widget.guestOrder.phoneNumber ?? "",
+                                    soldOrdered: [
+                                      for (var i = 0;
+                                          i < widget.listProductOrder.length;
+                                          i++) ...[
+                                        OrderProductDescription(
+                                            id: widget.listProductOrder[i].id,
+                                            amount: widget
+                                                .listProductOrder[i].amount,
+                                            type:
+                                                widget.listProductOrder[i].type,
+                                            price: widget
+                                                .listProductOrder[i].price,
+                                            productName: widget
+                                                .listProductOrder[i]
+                                                .productName)
+                                      ]
+                                    ]));
+                              } else {
+                                _soldOrdered.add(SoldOrderedModel(
+                                    idGuestOrder: widget.guestOrder.id ?? "",
+                                    id: Uuid().v4(),
+                                    image: _imageBytes!,
+                                    guestOrder: widget.guestOrder.guestName!,
+                                    guestAddress: widget.guestOrder.address,
+                                    guestPhoneNumber:
+                                        widget.guestOrder.phoneNumber,
+                                    soldOrdered: [
+                                      for (var i = 0;
+                                          i < widget.listProductOrder.length;
+                                          i++) ...[
+                                        OrderProductDescription(
+                                            id: widget.listProductOrder[i].id,
+                                            amount: widget
+                                                .listProductOrder[i].amount,
+                                            type:
+                                                widget.listProductOrder[i].type,
+                                            price: widget
+                                                .listProductOrder[i].price,
+                                            productName: widget
+                                                .listProductOrder[i]
+                                                .productName)
+                                      ]
+                                    ]));
+                              }
 
-                            Box guestBox = await Hive.openBox('guest');
-                            if (widget.guestOrder.id == null) {
-                              var idGuestGen = Uuid().v4();
-                              guestBox.add(GuestModel(
-                                  guestName: widget.guestOrder.guestName!,
-                                  guestPhoneNumber:
-                                      widget.guestOrder.phoneNumber ?? "",
-                                  guestType: GuestTypeEnum.guestNormal,
-                                  guestID: idGuestGen,
-                                  avatar: null,
-                                  guestAddress:
-                                      widget.guestOrder.address ?? ""));
-                              _soldOrdered.add(SoldOrderedModel(
-                                  idGuestOrder: idGuestGen,
-                                  id: Uuid().v4(),
-                                  image: _imageBytes!,
-                                  guestOrder: widget.guestOrder.guestName ?? "",
-                                  guestAddress: widget.guestOrder.address ?? "",
-                                  guestPhoneNumber:
-                                      widget.guestOrder.phoneNumber ?? "",
-                                  soldOrdered: [
-                                    for (var i = 0;
-                                        i < widget.listProductOrder.length;
-                                        i++) ...[
-                                      OrderProductDescription(
-                                          id: widget.listProductOrder[i].id,
-                                          amount:
-                                              widget.listProductOrder[i].amount,
-                                          type: widget.listProductOrder[i].type,
-                                          price:
-                                              widget.listProductOrder[i].price,
-                                          productName: widget
-                                              .listProductOrder[i].productName)
-                                    ]
-                                  ]));
+                              setState(() {
+                                Fluttertoast.showToast(
+                                    msg: "Đã tạo đơn hàng thành công !! ",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 10,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0);
+
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
+                              });
                             } else {
-                              _soldOrdered.add(SoldOrderedModel(
-                                  idGuestOrder: widget.guestOrder.id ?? "",
-                                  id: Uuid().v4(),
-                                  image: _imageBytes!,
-                                  guestOrder: widget.guestOrder.guestName!,
-                                  guestAddress: widget.guestOrder.address,
-                                  guestPhoneNumber:
-                                      widget.guestOrder.phoneNumber,
-                                  soldOrdered: [
-                                    for (var i = 0;
-                                        i < widget.listProductOrder.length;
-                                        i++) ...[
-                                      OrderProductDescription(
-                                          id: widget.listProductOrder[i].id,
-                                          amount:
-                                              widget.listProductOrder[i].amount,
-                                          type: widget.listProductOrder[i].type,
-                                          price:
-                                              widget.listProductOrder[i].price,
-                                          productName: widget
-                                              .listProductOrder[i].productName)
-                                    ]
-                                  ]));
-                            }
-
-                            setState(() {
                               Fluttertoast.showToast(
-                                  msg: "Đã tạo đơn hàng thành công !! ",
+                                  msg: "Vui lòng nhập tên người mua !! ",
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIosWeb: 10,
                                   backgroundColor: Colors.red,
                                   textColor: Colors.white,
                                   fontSize: 16.0);
-
-                              Navigator.of(context)
-                                  .popUntil((route) => route.isFirst);
-                            });
+                            }
                           },
                           icon: Icon(Icons.done),
                           label: Text("Tạo đơn hàng")),
@@ -330,7 +346,9 @@ class _BillPageState extends State<BillPage> {
                             primary: Colors.red, // background
                             onPrimary: Colors.white, // foreground
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                           icon: Icon(Icons.close),
                           label: Text("Hủy"))
                     ],
