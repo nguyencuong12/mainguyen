@@ -67,14 +67,15 @@ class _GuestPageState extends State<GuestPage> {
                           padding: const EdgeInsets.only(
                               top: 10, bottom: 10, left: 20, right: 20),
                           child: ListTile(
-                            onTap: () => {
-                              Navigator.push(
+                            onTap: () async => {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => GuestSoldWidget(
                                           guestInfo: _guestList[i],
                                         )),
-                              )
+                              ),
+                              await _openBox(),
                             },
                             onLongPress: () => {
                               getDeleteDialog(context,
