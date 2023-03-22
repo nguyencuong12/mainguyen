@@ -6,6 +6,7 @@ import 'package:mainguyen/pages/inputProduct.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/emptyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
@@ -106,29 +107,13 @@ class _OurOfStockState extends State<OurOfStock> {
                     ? Column(
                         children: [
                           for (var i = 0; i < getOurOfStock().length; i++) ...[
-                            InkWell(
-                                onTap: () => {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                PhotoViewWidget(
-                                                    image: getOurOfStock()[i]
-                                                        .imageProduct)),
-                                      )
-                                    },
-                                child: Container(
-                                  height: 140,
-                                  width: 140,
-                                  padding: const EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                    onError: (exception, stackTrace) => {},
-                                    image: MemoryImage(
-                                        getOurOfStock()[i].imageProduct),
-                                    fit: BoxFit.contain,
-                                  )),
-                                )),
+                            UtilsWidgetClass().renderImageWithChooseFunc(
+                                getOurOfStock()[i].imageProduct, () {
+                              UtilsWidgetClass().navigateScreen(
+                                  context,
+                                  PhotoViewWidget(
+                                      image: getOurOfStock()[i].imageProduct));
+                            }),
                             SizedBox(height: 10),
                             Text(
                                 "Tên sản phẩm: ${getOurOfStock()[i].productName} ",
@@ -146,7 +131,7 @@ class _OurOfStockState extends State<OurOfStock> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("Trạng thái:"),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 getOurOfStock()[i].amount <= 0
                                     ? Container(
                                         width: 100,

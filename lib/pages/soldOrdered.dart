@@ -3,6 +3,7 @@ import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
@@ -61,6 +62,22 @@ class _SoldOrdersState extends State<SoldOrders> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  IconButton(
+                                      onPressed: () async {
+                                        await UtilsWidgetClass()
+                                            .copyImage(_soldOrdered[i].image);
+
+                                        // getDeleteDialog(
+                                        //     context,
+                                        //     () => {
+                                        //           _soldOrderedBox.deleteAt(i),
+                                        //           setState(() {
+                                        //             _openBox();
+                                        //           })
+                                        //         });
+                                      },
+                                      icon: const Icon(Icons.copy,
+                                          color: Colors.blue)),
                                   IconButton(
                                       onPressed: () {
                                         getDeleteDialog(

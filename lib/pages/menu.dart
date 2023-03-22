@@ -5,6 +5,7 @@ import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 
 class MenuPage extends StatefulWidget {
@@ -15,6 +16,23 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
+  renderItem(String imageAsset, String title, Function onSubmit) {
+    return Card(
+        child: ListTile(
+      onTap: () {
+        onSubmit();
+      },
+      leading: Image(
+        image: AssetImage(
+          imageAsset,
+        ),
+        height: screenSizeWithoutContext.height / 60,
+      ),
+      subtitle: const Text("Quản lý:", style: TextStyle(fontSize: 12)),
+      title: Text(title, style: TextStyle(fontSize: 12)),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,89 +42,37 @@ class _MenuPageState extends State<MenuPage> {
                 style: TextStyle(fontSize: TextSize().getLabelTextSize())),
             widgetActions: []),
         body: BodyWidget(
-            bodyWidget: Container(
+            bodyWidget: SizedBox(
                 height: screenSizeWithoutContext.height,
                 width: screenSizeWithoutContext.width,
                 child: GridView(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 10,
+                      childAspectRatio: (1 / .4),
                     ),
                     children: [
-                      InkWell(
-                          onTap: () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const SoldOrders()),
-                                )
-                              },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.green)),
-                              child: const Align(
-                                child: ListTile(
-                                  onTap: null,
-                                  leading: Image(
-                                      image: AssetImage(
-                                          'assets/appIcons/package.png')),
-                                  title: Text(
-                                    'Hàng hóa đã bán ',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ))),
-                      InkWell(
-                          onTap: () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const OurOfStock()),
-                                )
-                              },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.green)),
-                              child: const Align(
-                                child: ListTile(
-                                  onTap: null,
-                                  leading: Image(
-                                      image: AssetImage(
-                                          'assets/appIcons/package.png')),
-                                  title: Text(
-                                    'Sắp hết hàng ',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ))),
-                      InkWell(
-                          onTap: () => {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const GuestPage()),
-                                )
-                              },
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.green)),
-                              child: const Align(
-                                child: ListTile(
-                                  onTap: null,
-                                  leading: Image(
-                                      image: AssetImage(
-                                          'assets/appIcons/package.png')),
-                                  title: Text(
-                                    'Khách hàng ',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ))),
+                      renderItem(
+                          "assets/appIcons/package.png",
+                          "Hàng hóa đã bán ",
+                          () => {
+                                UtilsWidgetClass()
+                                    .navigateScreen(context, const SoldOrders())
+                              }),
+                      renderItem(
+                          "assets/appIcons/user.png",
+                          "Khách hàng ",
+                          () => {
+                                UtilsWidgetClass()
+                                    .navigateScreen(context, const GuestPage())
+                              }),
+                      renderItem(
+                          "assets/appIcons/out-of-stock.png",
+                          "Hàng sắp hết ",
+                          () => {
+                                UtilsWidgetClass()
+                                    .navigateScreen(context, const OurOfStock())
+                              }),
                     ]))
 
             // Generate 100 widgets that display their index in the List.

@@ -8,11 +8,13 @@ import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/classes/product/product.dart';
+import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
 
@@ -114,15 +116,31 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     BoxDecoration(color: Colors.black12))
                           ],
                         )),
-                    Text("Tên sản phẩm: ${product.productName}",
-                        style: Theme.of(context).textTheme.headline6),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, top: 8, bottom: 8),
+                      child: RenderRichText(
+                          content: "Tên sản phẩm: ${product.productName}",
+                          maxLine: 3,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black)),
+                    ),
+
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: Divider(height: 4),
                     ),
-                    renderRowVer1(
-                      title: "Nhập hàng từ (anh/chị):",
-                      content: product.distributor,
+
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, top: 8, bottom: 8),
+                      child: RenderRichText(
+                        content:
+                            "Nhập hàng từ (anh/chị): ${product.distributor}",
+                        maxLine: 3,
+                      ),
                     ),
 
                     renderRowVer1(
@@ -207,6 +225,24 @@ class _ProductDetailsState extends State<ProductDetails> {
             title: Text("Chi tiết sản phẩm",
                 style: TextStyle(fontSize: TextSize().getLabelTextSize())),
             widgetActions: [
+              IconButton(
+                  onPressed: () {
+                    getDeleteDialog(context, () async {
+                      Box productBox = await Hive.openBox('product');
+                      for (var i = 0; i < productBox.length; i++) {
+                        Product temp = productBox.getAt(i);
+                        if (product.id == temp.id) {
+                          productBox.deleteAt(i);
+                        }
+                      }
+
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    });
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                  )),
               IconButton(
                   onPressed: () {
                     showDialog(

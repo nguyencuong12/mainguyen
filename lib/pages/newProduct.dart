@@ -12,6 +12,7 @@ import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 import 'package:selection_menu/selection_menu.dart';
@@ -304,7 +305,7 @@ class _NewProductState extends State<NewProduct> {
                               allowMenuToCloseBeforeOpenCompletes: true,
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 10),
                               child: TextFormField(
                                 validator: (value) {
@@ -348,7 +349,7 @@ class _NewProductState extends State<NewProduct> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 10),
                               child: TextFormField(
                                 validator: (value) {
@@ -371,44 +372,11 @@ class _NewProductState extends State<NewProduct> {
                             ),
                           ],
                         )),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.green, // background
-                            onPrimary: Colors.white, // foreground
-                          ),
-                          // onPressed: () async {
-                          //   handleSubmit();
-                          // },
-                          onPressed: () => {handleSubmit()},
-                          icon: const Icon(
-                            Icons.done,
-                            size: 24.0,
-                          ),
-                          label: Text('Hoàn thành'), // <-- Text
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.red, // background
-                            onPrimary: Colors.white, // foreground
-                          ),
-                          onPressed: () async {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            size: 24.0,
-                          ),
-
-                          label: Text('Hủy'), // <-- Text
-                        ),
-                      ],
-                    )
+                    UtilsWidgetClass().renderGroupActionsButton(
+                        context,
+                        () => {
+                              handleSubmit(),
+                            })
                   ],
                 ))));
   }

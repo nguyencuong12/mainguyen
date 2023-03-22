@@ -7,6 +7,7 @@ import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/screenSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/emptyWidget.dart';
 import 'package:mainguyen/widgets/productDetails/productDetails.dart';
@@ -68,12 +69,6 @@ class _AllProductsState extends State<AllProducts> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 direction: Axis.vertical,
                 children: [
-                  // Align(
-                  //     alignment: Alignment.topRight,
-                  //     child: IconButton(
-                  //         padding: EdgeInsets.all(0),
-                  //         onPressed: () {},
-                  //         icon: Icon(Icons.delete, color: Colors.red))),
                   Container(
                     height: 120,
                     width: 160,
@@ -97,32 +92,55 @@ class _AllProductsState extends State<AllProducts> {
     );
   }
 
+  renderItem(Product product, Function onSubmit) {
+    return Card(
+        child: ListTile(
+            onTap: () {
+              onSubmit();
+            },
+            leading: Image(
+              image: MemoryImage(
+                product.imageProduct,
+              ),
+              height: screenSizeWithoutContext.height / 20,
+            ),
+            subtitle: Text("Số lượng: ${product.amount.toString()}",
+                style: const TextStyle(fontSize: 12, color: Colors.red)),
+            title: RenderRichText(content: product.productName, maxLine: 1)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: _products.isNotEmpty
-            ? GridView.count(
+            ? GridView(
                 primary: false,
                 padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 20,
-                crossAxisCount: 2,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: (1 / .5),
+                ),
                 children: [
-                  ..._products.map((product) => renderProductBox(
-                      product.productName,
-                      product.imageProduct,
-                      () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetails(product: product)),
-                            ),
-                          },
-                      () async => {
-                            _productBox.deleteAt(_products.indexOf(product)),
-                            _openBox()
-                          }))
+                  ..._products.map(
+                    (product) => renderItem(product, () async {
+                      await UtilsWidgetClass().navigateScreen(
+                          context, ProductDetails(product: product));
+                      await _openBox();
+                      // await _productBox();
+                    }),
+
+                    // renderProductBox(
+                    //     product.productName,
+                    //     product.imageProduct,
+                    //     () => {
+                    //           UtilsWidgetClass().navigateScreen(
+                    //               context, ProductDetails(product: product))
+                    //         },
+                    //     () async => {
+                    //           _productBox.deleteAt(_products.indexOf(product)),
+                    //           _openBox()
+                    //         })
+                  )
                 ],
               )
             : ImageEmpty(title: "Hiện chưa có sản phẩm nào"),

@@ -99,19 +99,6 @@ class _SaleProductsState extends State<SaleProducts> {
   DataRow renderDataRow(SellProduct product) {
     var amountConst = product.amount;
     return DataRow(cells: [
-      // DataCell(
-      //   Container(
-      //     height: 40,
-      //     width: 40,
-      //     padding: const EdgeInsets.all(0),
-      //     decoration: BoxDecoration(
-      //         image: DecorationImage(
-      //       onError: (exception, stackTrace) => {},
-      //       image: MemoryImage(product.image),
-      //       fit: BoxFit.contain,
-      //     )),
-      //   ),
-      // ),
       DataCell(InkWell(
           onTap: () => {
                 Navigator.push(

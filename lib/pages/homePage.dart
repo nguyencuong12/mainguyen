@@ -1,7 +1,6 @@
 // ignore: file_names
 
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/product/product.dart';
@@ -11,13 +10,11 @@ import 'package:mainguyen/pages/delivery.dart';
 import 'package:mainguyen/pages/inputProduct.dart';
 import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
-import 'package:mainguyen/pages/productBought.dart';
 import 'package:mainguyen/pages/sell.dart';
 import 'package:mainguyen/utils/colorApps.dart';
-import 'package:mainguyen/utils/sizeAppbarButton.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
-import 'package:mainguyen/widgets/autocomplete.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/productDetails/productDetails.dart';
 import '../utils/screenSize.dart';
@@ -44,6 +41,8 @@ class _HomePageState extends State<HomePage> {
     for (var i = 0; i < _productBox.length; i++) {
       _options.add(_productBox.getAt(i));
     }
+    print("PRODUCT LENGTH ${_productBox.length}");
+    print("OPTION ${_options.length}");
 
     setState(() {});
     return;
@@ -116,65 +115,52 @@ class _HomePageState extends State<HomePage> {
               renderProductBox(
                   "Thêm hàng mới ",
                   "assets/appIcons/cart.png",
-                  () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const NewProduct()),
-                        ).then((value) async {
-                          print("CALL");
-                          await _openBox();
-                        })
+                  () async => {
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, const NewProduct()),
+                        await _openBox(),
                       }),
               renderProductBox(
                   "Tạo đơn bán hàng",
                   "assets/appIcons/sell.png",
-                  () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SaleProducts()),
-                        )
+                  () async => {
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, const SaleProducts()),
                       }),
               renderProductBox(
                   "Nhập hàng",
                   "assets/appIcons/import.png",
-                  () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => InputProduct()),
-                        )
+                  () async => {
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, InputProduct()),
+                        await _openBox()
                       }),
               renderProductBox(
                   "Vận chuyển",
                   "assets/appIcons/delivery.png",
                   () async => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DeliveryWidget()),
-                        )
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, const DeliveryWidget()),
                       }),
               renderProductBox(
                   "Thêm khách hàng ",
                   "assets/appIcons/user.png",
-                  () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CreateGuest()),
-                        )
+                  () async => {
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, const CreateGuest()),
                       }),
               renderProductBox(
                   "Tất cả hàng trong kho",
                   "assets/appIcons/package.png",
                   () async => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AllProducts()),
-                        )
+                        await UtilsWidgetClass()
+                            .navigateScreen(context, const AllProducts()),
+                        await _openBox()
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => const AllProducts()),
+                        // )
                       }),
             ],
           ),
@@ -215,12 +201,6 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () => {
                                 Navigator.of(context)
                                     .popUntil((route) => route.isFirst)
-
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => const HomePage()),
-                                // )
                               }),
                     ],
                   ),
@@ -254,11 +234,11 @@ class _HomePageState extends State<HomePage> {
 class AutocompleteField extends StatelessWidget {
   AutocompleteField({
     super.key,
-    required List<Product> options,
+    required this.options,
     required this.label,
-  }) : _options = options;
+  });
 
-  final List<Product> _options;
+  final List<Product> options;
   final String label;
 
   @override
@@ -277,7 +257,7 @@ class AutocompleteField extends StatelessWidget {
                 )),
             child: RawAutocomplete<Product>(
               optionsBuilder: (TextEditingValue textEditingValue) {
-                return _options.where((Product product) {
+                return options.where((Product product) {
                   return product.productName
                       .contains(textEditingValue.text.toLowerCase());
                 });
@@ -314,15 +294,11 @@ class AutocompleteField extends StatelessWidget {
                         itemBuilder: (BuildContext context, int index) {
                           final Product product = options.elementAt(index);
                           return GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 // onSelected(option);
                                 UtilsFunction().closeKeyboard();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetails(product: product)),
-                                );
+                                await UtilsWidgetClass().navigateScreen(
+                                    context, ProductDetails(product: product));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),

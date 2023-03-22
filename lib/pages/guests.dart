@@ -5,14 +5,13 @@ import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/pages/createGuest.dart';
 import 'package:mainguyen/pages/guestSold.dart';
-import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/emptyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class GuestPage extends StatefulWidget {
   const GuestPage({super.key});
-
   @override
   State<GuestPage> createState() => _GuestPageState();
 }
@@ -20,10 +19,8 @@ class GuestPage extends StatefulWidget {
 class _GuestPageState extends State<GuestPage> {
   late Box _guestBox;
   List<GuestModel> _guestList = [];
-
   Future _openBox() async {
     _guestBox = await Hive.openBox('guest');
-    // _soldOrderedBox.clear();
     _guestList = [];
     for (var i = 0; i < _guestBox.length; i++) {
       _guestList.add(_guestBox.getAt(i));
@@ -34,22 +31,8 @@ class _GuestPageState extends State<GuestPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _openBox();
-  }
-
-  renderType(GuestTypeEnum type) {
-    switch (type) {
-      case GuestTypeEnum.dearCustomer:
-        return "Thân thiết";
-
-      case GuestTypeEnum.guestNormal:
-        return "Vãng lai";
-
-      case GuestTypeEnum.vip:
-        return "VIP";
-    }
   }
 
   @override
@@ -68,13 +51,11 @@ class _GuestPageState extends State<GuestPage> {
                               top: 10, bottom: 10, left: 20, right: 20),
                           child: ListTile(
                             onTap: () async => {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => GuestSoldWidget(
-                                          guestInfo: _guestList[i],
-                                        )),
-                              ),
+                              await UtilsWidgetClass().navigateScreen(
+                                  context,
+                                  GuestSoldWidget(
+                                    guestInfo: _guestList[i],
+                                  )),
                               await _openBox(),
                             },
                             onLongPress: () => {
@@ -89,7 +70,9 @@ class _GuestPageState extends State<GuestPage> {
                                     backgroundImage:
                                         MemoryImage(_guestList[i].avatar!))
                                 : null,
-                            title: Text("Tên: ${_guestList[i].guestName}"),
+                            title: RenderRichText(
+                                content: "Tên: ${_guestList[i].guestName}",
+                                maxLine: 1),
                             subtitle:
                                 Text("SĐT: ${_guestList[i].guestPhoneNumber}"),
                             trailing: Container(
@@ -98,23 +81,22 @@ class _GuestPageState extends State<GuestPage> {
                                 decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(20)),
-                                child: Text(renderType(_guestList[i].guestType),
+                                child: Text(
+                                    UtilsWidgetClass().renderTypeForGuest(
+                                        _guestList[i].guestType),
                                     style: TextStyle(color: Colors.white))),
                           ),
                         ))
                       ],
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       FloatingActionButton(
                         backgroundColor: Colors.green,
-                        child: Icon(
+                        child: const Icon(
                           Icons.add,
                         ),
                         onPressed: () async => {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CreateGuest()),
-                          ),
+                          await UtilsWidgetClass()
+                              .navigateScreen(context, CreateGuest()),
                           await _openBox(),
                         },
                       ),
@@ -125,15 +107,12 @@ class _GuestPageState extends State<GuestPage> {
                       ImageEmpty(title: "Hiện chưa có khách hàng nào"),
                       FloatingActionButton(
                         backgroundColor: Colors.green,
-                        child: Icon(
+                        child: const Icon(
                           Icons.add,
                         ),
                         onPressed: () async => {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CreateGuest()),
-                          ),
+                          await UtilsWidgetClass()
+                              .navigateScreen(context, CreateGuest()),
                           await _openBox(),
                         },
                       ),
@@ -144,12 +123,6 @@ class _GuestPageState extends State<GuestPage> {
         appBar: CustomAppBar(
           backButton: true,
           title: TitleAppbarWidget(content: "Khách hàng"),
-          // Text(
-          //   "Khách hàng",
-          //   style: TextStyle(
-          //     fontSize: TextSize().getLabelTextSize(),
-          //   ),
-          // ),
           widgetActions: [],
         ));
   }
