@@ -17,6 +17,7 @@ import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class ProductDetails extends StatefulWidget {
   const ProductDetails({super.key, required this.product});
@@ -152,18 +153,27 @@ class _ProductDetailsState extends State<ProductDetails> {
                         title: "Số lượng còn trong kho:",
                         content:
                             "${product.amount.toString()} ${renderType(product.type)}"),
-
-                    renderRowVer1(
-                        title: "Vị trí hàng trong kho:",
-                        content: product.location,
-                        color: Colors.blue),
-
-                    renderRowVer1(
-                      title: "Ngày nhập sản phẩm:",
-                      content: UtilsFunction().formatDateTime(product.date),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, top: 8, bottom: 8),
+                      child: RenderRichText(
+                        content: "Vị trí hàng trong kho: ${product.location}",
+                        maxLine: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, top: 8, bottom: 8),
+                      child: RenderRichText(
+                        content:
+                            "Ngày nhập sản phẩm: ${UtilsFunction().formatDateTime(product.date)}",
+                        maxLine: 2,
+                      ),
                     ),
 
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     product.amount <= 0
                         ? Align(
                             alignment: Alignment.center,
@@ -222,8 +232,7 @@ class _ProductDetailsState extends State<ProductDetails> {
     return Scaffold(
         appBar: CustomAppBar(
             backButton: true,
-            title: Text("Chi tiết sản phẩm",
-                style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+            title: TitleAppbarWidget(content: "Chi tiết sản phẩm"),
             widgetActions: [
               IconButton(
                   onPressed: () {
@@ -241,7 +250,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                     });
                   },
                   icon: Icon(
-                    Icons.delete,
+                    color: Colors.black,
+                    Icons.delete_outline,
                   )),
               IconButton(
                   onPressed: () {
@@ -383,7 +393,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                     //           ));
                     //     });
                   },
-                  icon: Icon(Icons.edit))
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: Colors.black,
+                  ))
             ]),
         body: Stack(
           children: [

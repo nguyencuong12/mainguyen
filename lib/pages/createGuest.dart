@@ -9,6 +9,7 @@ import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 import 'package:selection_menu/selection_menu.dart';
 import 'package:uuid/uuid.dart';
 
@@ -69,8 +70,7 @@ class _CreateGuestState extends State<CreateGuest> {
     return Scaffold(
       appBar: CustomAppBar(
           backButton: true,
-          title: Text("Thêm khách hàng",
-              style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+          title: TitleAppbarWidget(content: "Thêm khách hàng"),
           widgetActions: []),
       body: BodyWidget(
           bodyWidget: Container(
@@ -160,7 +160,6 @@ class _CreateGuestState extends State<CreateGuest> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               var box = await Hive.openBox('guest');
-
                               box.add(GuestModel(
                                   guestName: _guestOrder.guestName!,
                                   guestPhoneNumber: _guestOrder.phoneNumber!,
@@ -229,21 +228,18 @@ Widget itemBuildSelection(
               child: Padding(
                 padding: EdgeInsets.only(left: 10.0),
                 child: Text(
+                  style: TextStyle(fontSize: 12),
                   "Phân loại khách hàng",
                   // style: textStyle,
                 ),
               ),
             ),
             Container(
-              padding:
-                  EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.0), color: Colors.red),
               child: Text("$item",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white)
+                  style: const TextStyle(color: Colors.white, fontSize: 12)
                   // style: textStyle,
                   ),
             )

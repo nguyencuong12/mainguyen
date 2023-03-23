@@ -6,6 +6,7 @@ import 'package:mainguyen/classes/sell/sellProductClass.dart';
 import 'package:mainguyen/models/delivery/deliveryModel.dart';
 import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/models/product/product.dart';
+import 'package:mainguyen/models/secret/secret.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,9 +24,15 @@ void main() async {
     ..registerAdapter(OrderProductDescriptionAdapter())
     ..registerAdapter(DeliveryModelAdapter())
     ..registerAdapter(GuestModelAdapter())
-    ..registerAdapter(GuestTypeEnumAdapter());
+    ..registerAdapter(GuestTypeEnumAdapter())
+    ..registerAdapter(SecretModelAdapter())
+    ..registerAdapter(FacebookSecretAdapter())
+    ..registerAdapter(ZaloSecretAdapter())
+    ..registerAdapter(EmailSecretAdapter());
+  await Hive.close();
 
   await Hive.openBox("product");
+  await Hive.openBox("secret");
 
   runApp(const MyApp());
 }
@@ -38,7 +45,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo Is the Part',
-        theme: ThemeData(),
+        theme: ThemeData(
+          primaryColor: Colors.lightBlue[800],
+          fontFamily: 'Roboto-Mono',
+        ),
         home: const HomePage());
   }
 }

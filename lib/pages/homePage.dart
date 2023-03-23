@@ -1,6 +1,8 @@
 // ignore: file_names
 
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/product/product.dart';
@@ -41,8 +43,6 @@ class _HomePageState extends State<HomePage> {
     for (var i = 0; i < _productBox.length; i++) {
       _options.add(_productBox.getAt(i));
     }
-    print("PRODUCT LENGTH ${_productBox.length}");
-    print("OPTION ${_options.length}");
 
     setState(() {});
     return;
@@ -53,12 +53,16 @@ class _HomePageState extends State<HomePage> {
       onTap: () {
         callback();
       },
-      child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: ColorsInApp().getPrimaryColor()),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
+      child: DottedBorder(
+        color: const Color.fromARGB(255, 117, 116, 116),
+        dashPattern: [4, 3],
+        borderType: BorderType.RRect,
+        radius: const Radius.circular(12),
+        padding: const EdgeInsets.all(6),
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(12)),
+          child: SizedBox(
+              child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
             child: Flex(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,6 +85,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           )),
+        ),
+      ),
     );
   }
 
@@ -88,84 +94,105 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     // ignore: prefer_const_constructors
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(100.0),
-          child: Container(
-            padding: EdgeInsets.only(top: 20),
-            child: CustomAppBar(
-              title: AutocompleteField(
-                options: _options,
-                label: "11",
-              ),
-              backButton: false,
-              widgetActions: [],
-            ),
-          )),
+      extendBodyBehindAppBar: true,
+      // appBar: PreferredSize(
+      //     preferredSize: Size.fromHeight(100.0),
+      //     child: Container(
+      //       padding: EdgeInsets.only(top: 20),
+      //       child: CustomAppBar(
+      //         title:
+      //         AutocompleteField(
+      //           options: _options,
+      //           label: "11",
+      //         ),
+      //         backButton: false,
+      //         widgetActions: [],
+      //       ),
+      //     )),
+      // AutocompleteField(
+      //   options: _options,
+      //   label: "11",
+      // ),
       body: BodyWidget(
-        bodyWidget: Container(
-          width: screenSizeWithoutContext.width,
-          height: screenSizeWithoutContext.height / 3,
-          child: GridView.count(
-            primary: false,
-            padding: const EdgeInsets.all(20),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 20,
-            crossAxisCount: 2,
-            children: <Widget>[
-              renderProductBox(
-                  "Thêm hàng mới ",
-                  "assets/appIcons/cart.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, const NewProduct()),
-                        await _openBox(),
-                      }),
-              renderProductBox(
-                  "Tạo đơn bán hàng",
-                  "assets/appIcons/sell.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, const SaleProducts()),
-                      }),
-              renderProductBox(
-                  "Nhập hàng",
-                  "assets/appIcons/import.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, InputProduct()),
-                        await _openBox()
-                      }),
-              renderProductBox(
-                  "Vận chuyển",
-                  "assets/appIcons/delivery.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, const DeliveryWidget()),
-                      }),
-              renderProductBox(
-                  "Thêm khách hàng ",
-                  "assets/appIcons/user.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, const CreateGuest()),
-                      }),
-              renderProductBox(
-                  "Tất cả hàng trong kho",
-                  "assets/appIcons/package.png",
-                  () async => {
-                        await UtilsWidgetClass()
-                            .navigateScreen(context, const AllProducts()),
-                        await _openBox()
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => const AllProducts()),
-                        // )
-                      }),
-            ],
-          ),
+        bodyWidget: Column(
+          children: [
+            SizedBox(height: 20),
+            Padding(
+                padding: EdgeInsets.all(18.0),
+                child: AutocompleteFieldProduct(
+                  label: "Tìm sản phẩm trong kho",
+                  options: _options,
+                  callback: (Product product) async {
+                    await UtilsWidgetClass().navigateScreen(
+                        context, ProductDetails(product: product));
+                  },
+                )),
+            SizedBox(
+              height: 600,
+              child: GridView.count(
+                primary: false,
+                padding: const EdgeInsets.all(20),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 20,
+                crossAxisCount: 2,
+                children: <Widget>[
+                  renderProductBox(
+                      "Thêm hàng mới ",
+                      "assets/appIcons/cart.png",
+                      () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const NewProduct()),
+                            await _openBox(),
+                          }),
+                  renderProductBox(
+                      "Tạo đơn bán hàng",
+                      "assets/appIcons/sell.png",
+                      () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const SaleProducts()),
+                          }),
+                  renderProductBox(
+                      "Nhập hàng",
+                      "assets/appIcons/import.png",
+                      () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, InputProduct()),
+                            await _openBox()
+                          }),
+                  renderProductBox(
+                      "Vận chuyển",
+                      "assets/appIcons/delivery.png",
+                      () async => {
+                            await UtilsWidgetClass().navigateScreen(
+                                context, const DeliveryWidget()),
+                          }),
+                  renderProductBox(
+                      "Thêm khách hàng ",
+                      "assets/appIcons/user.png",
+                      () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const CreateGuest()),
+                          }),
+                  renderProductBox(
+                      "Tất cả hàng trong kho",
+                      "assets/appIcons/package.png",
+                      () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const AllProducts()),
+                            await _openBox()
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //       builder: (context) => const AllProducts()),
+                            // )
+                          }),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorsInApp().getPrimaryColor(),
         child: Icon(
@@ -228,107 +255,5 @@ class _HomePageState extends State<HomePage> {
                 ],
               ))),
     );
-  }
-}
-
-class AutocompleteField extends StatelessWidget {
-  AutocompleteField({
-    super.key,
-    required this.options,
-    required this.label,
-  });
-
-  final List<Product> options;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 80,
-        child: InputDecorator(
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                label: Text(label),
-                filled: true,
-                fillColor: Colors.white,
-                prefix: const Icon(
-                  Icons.search,
-                  color: Colors.black,
-                )),
-            child: RawAutocomplete<Product>(
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                return options.where((Product product) {
-                  return product.productName
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController textEditingController,
-                  FocusNode focusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextFormField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(border: InputBorder.none),
-                  onFieldSubmitted: (String value) {
-                    onFieldSubmitted();
-                  },
-                );
-              },
-              onSelected: (option) => {},
-              optionsViewBuilder: (BuildContext context,
-                  AutocompleteOnSelected<Product> onSelected,
-                  Iterable<Product> options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4.0,
-                    child: Container(
-                      height: 200.0,
-                      width: screenSizeWithoutContext.width / 3.4,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final Product product = options.elementAt(index);
-                          return GestureDetector(
-                              onTap: () async {
-                                // onSelected(option);
-                                UtilsFunction().closeKeyboard();
-                                await UtilsWidgetClass().navigateScreen(
-                                    context, ProductDetails(product: product));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Card(
-                                  child: ListTile(
-                                    subtitle: Text(
-                                        "Vị trí: ${product.location}",
-                                        style: const TextStyle(fontSize: 12)),
-                                    leading: Image(
-                                        height: 50,
-                                        image:
-                                            MemoryImage(product.imageProduct)),
-                                    title: Text(
-                                      "Sản phẩm: ${product.productName}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              )
-
-                              // ListTile(
-                              //   title: Text(option.productName),
-                              // ),
-                              );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            )));
   }
 }

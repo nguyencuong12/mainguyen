@@ -4,7 +4,9 @@ import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/dialogs/dialogs.dart';
 import 'package:mainguyen/models/delivery/deliveryModel.dart';
+import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/utils/screenSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
@@ -53,7 +55,7 @@ class _DeliveryWidgetState extends State<DeliveryWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: BodyWidget(
-            bodyWidget: Container(
+            bodyWidget: SizedBox(
                 height: screenSizeWithoutContext.height / 3,
                 width: screenSizeWithoutContext.width,
                 child: Column(
@@ -251,13 +253,8 @@ class _DeliveryWidgetState extends State<DeliveryWidget> {
                                                           }
                                                           return null;
                                                         },
-                                                        // onChanged: (value) =>
-                                                        //     {onSubmit(value)},
-                                                        // keyboardType: typeNumber
-                                                        // ? TextInputType.phone
-                                                        // : TextInputType.text,
                                                         decoration:
-                                                            InputDecoration(
+                                                            const InputDecoration(
                                                                 border:
                                                                     InputBorder
                                                                         .none),

@@ -15,8 +15,10 @@ import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/sizeAppbarButton.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class SaleProducts extends StatefulWidget {
   const SaleProducts({super.key});
@@ -177,8 +179,7 @@ class _SaleProductsState extends State<SaleProducts> {
     return Scaffold(
         appBar: CustomAppBar(
             backButton: true,
-            title: Text("Tạo hóa đơn bán hàng",
-                style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+            title: const TitleAppbarWidget(content: "Tạo hóa đơn bán hàng"),
             widgetActions: []),
         body: BodyWidget(
             bodyWidget: Container(
@@ -192,7 +193,7 @@ class _SaleProductsState extends State<SaleProducts> {
                             Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 10),
-                                child: AutocompleteFieldSell(
+                                child: AutocompleteFieldProduct(
                                   options: _options,
                                   label: "Nhập hàng cần bán",
                                   callback: (Product product) {
@@ -262,18 +263,20 @@ class _SaleProductsState extends State<SaleProducts> {
                             Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 10),
-                                child: AutocompleteFieldGuestSell(
+                                child: AutocompleteFieldGuest(
                                     callbackSelect: (GuestModel guest) {
-                                  setState(() {});
-                                  _guestOrder = GuestOrder(
-                                      id: guest.guestID,
-                                      guestName: guest.guestName,
-                                      phoneNumber: guest.guestPhoneNumber,
-                                      address: guest.guestAddress);
-                                }, callbackSubmit: (String value) {
-                                  setState(() {});
-                                  _guestOrder.guestName = value;
-                                })),
+                                      setState(() {});
+                                      _guestOrder = GuestOrder(
+                                          id: guest.guestID,
+                                          guestName: guest.guestName,
+                                          phoneNumber: guest.guestPhoneNumber,
+                                          address: guest.guestAddress);
+                                    },
+                                    callbackSubmit: (String value) {
+                                      setState(() {});
+                                      _guestOrder.guestName = value;
+                                    },
+                                    label: "Nhập khách hàng cần bán")),
                           ],
                         )),
                     Padding(
@@ -379,274 +382,5 @@ class _SaleProductsState extends State<SaleProducts> {
                         )),
                   ],
                 ))));
-  }
-}
-
-class AutocompleteFieldSell extends StatelessWidget {
-  AutocompleteFieldSell({
-    super.key,
-    required List<Product> options,
-    required this.label,
-    required this.callback,
-  }) : _options = options;
-
-  final List<Product> _options;
-
-  final String label;
-  final void Function(Product) callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 80,
-        child: InputDecorator(
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                label: Text(label),
-                filled: true,
-                fillColor: Colors.white,
-                prefix: const Icon(
-                  Icons.search,
-                  color: Colors.black,
-                )),
-            child: RawAutocomplete<Product>(
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                return _options.where((Product product) {
-                  return product.productName
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController textEditingController,
-                  FocusNode focusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextFormField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(border: InputBorder.none),
-                  onFieldSubmitted: (String value) {
-                    onFieldSubmitted();
-                  },
-                );
-              },
-              onSelected: (option) => {},
-              optionsViewBuilder: (BuildContext context,
-                  AutocompleteOnSelected<Product> onSelected,
-                  Iterable<Product> options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4.0,
-                    child: Container(
-                      height: 200.0,
-                      width: screenSizeWithoutContext.width / 3.4,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final Product product = options.elementAt(index);
-                          return GestureDetector(
-                              onTap: () {
-                                // onSelected(option);
-                                callback(product);
-
-                                UtilsFunction().closeKeyboard();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Card(
-                                  child: ListTile(
-                                    subtitle: Text(
-                                        "Vị trí: ${product.location}",
-                                        style: const TextStyle(fontSize: 12)),
-                                    leading: Image(
-                                        height: 50,
-                                        image:
-                                            MemoryImage(product.imageProduct)),
-                                    title: Text(
-                                      "Sản phẩm: ${product.productName}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              )
-
-                              // ListTile(
-                              //   title: Text(option.productName),
-                              // ),
-                              );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            )));
-  }
-}
-
-class AutocompleteFieldGuestSell extends StatefulWidget {
-  AutocompleteFieldGuestSell(
-      {super.key, required this.callbackSelect, required this.callbackSubmit});
-  final void Function(GuestModel) callbackSelect;
-  final void Function(String) callbackSubmit;
-
-  @override
-  _AutocompleteFieldGuestSellState createState() =>
-      _AutocompleteFieldGuestSellState();
-}
-
-class _AutocompleteFieldGuestSellState
-    extends State<AutocompleteFieldGuestSell> {
-  List<GuestModel> options = [];
-  late Box _guestBox;
-
-  final TextEditingController _textEditingController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-
-  String label = "Nhập khách hàng cần bán ";
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _openGuestModel();
-  }
-
-  Future _openGuestModel() async {
-    _guestBox = await Hive.openBox('guest');
-    for (var i = 0; i < _guestBox.length; i++) {
-      options.add(_guestBox.getAt(i));
-    }
-    setState(() {});
-    return;
-  }
-
-  renderType(GuestTypeEnum type) {
-    switch (type) {
-      case GuestTypeEnum.dearCustomer:
-        return "Thân thiết";
-
-      case GuestTypeEnum.guestNormal:
-        return "Vãng lai";
-
-      case GuestTypeEnum.vip:
-        return "VIP";
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 80,
-        child: InputDecorator(
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                label: Text(label),
-                filled: true,
-                fillColor: Colors.white,
-                prefix: const Icon(
-                  Icons.search,
-                  color: Colors.black,
-                )),
-            child: RawAutocomplete<GuestModel>(
-              focusNode: _focusNode,
-              textEditingController: _textEditingController,
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                return options.where((GuestModel guest) {
-                  return guest.guestName
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController textEditingController,
-                  FocusNode focusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextFormField(
-                  // initialValue: valueAdd,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập tên người mua hàng';
-                    }
-                    return null;
-                  },
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(border: InputBorder.none),
-
-                  onChanged: (String value) {
-                    widget.callbackSubmit(value);
-                  },
-                );
-              },
-              optionsViewBuilder: (BuildContext context,
-                  AutocompleteOnSelected<GuestModel> onSelected,
-                  Iterable<GuestModel> options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4.0,
-                    child: Container(
-                      height: 200.0,
-                      width: screenSizeWithoutContext.width / 3.4,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final GuestModel guest = options.elementAt(index);
-                          return GestureDetector(
-                              onTap: () {
-                                // onSelected(option);
-                                _textEditingController.text = guest.guestName;
-                                widget.callbackSelect(guest);
-                                UtilsFunction().closeKeyboard();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Card(
-                                  child: ListTile(
-                                    trailing: Container(
-                                        clipBehavior: Clip.none,
-                                        padding: const EdgeInsets.only(
-                                            top: 8,
-                                            bottom: 8,
-                                            left: 15,
-                                            right: 15),
-                                        decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        child: Text(renderType(guest.guestType),
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                    // subtitle: Text("Vị trí: ",
-                                    //     style: const TextStyle(fontSize: 12)),
-                                    leading: guest.avatar != null
-                                        ? Image(
-                                            height: 50,
-                                            image: MemoryImage(guest.avatar!))
-                                        : null,
-                                    title: Text(
-                                      "Khách hàng: ${guest.guestName}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              )
-
-                              // ListTile(
-                              //   title: Text(option.productName),
-                              // ),
-                              );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            )));
   }
 }

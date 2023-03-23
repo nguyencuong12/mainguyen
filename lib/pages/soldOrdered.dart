@@ -8,6 +8,7 @@ import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/widgets/emptyWidget.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class SoldOrders extends StatefulWidget {
   const SoldOrders({super.key});
@@ -106,9 +107,6 @@ class _SoldOrdersState extends State<SoldOrders> {
         appBar: CustomAppBar(
             widgetActions: [],
             backButton: true,
-            title: Text(
-              "Các đơn hàng đã bán",
-              style: TextStyle(fontSize: TextSize().getLabelTextSize()),
-            )));
+            title: TitleAppbarWidget(content: "Các đơn hàng đã bán")));
   }
 }

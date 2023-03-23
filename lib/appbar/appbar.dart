@@ -30,10 +30,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   Widget build(BuildContext context) {
     return AppBar(
-        backgroundColor: ColorsInApp().getPrimaryColor(),
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
         title: widget.title,
         actions: widget.widgetActions,
         centerTitle: true,
-        leading: widget.backButton ? const BackButton() : null);
+        leading:
+            widget.backButton ? const BackButton(color: Colors.black) : null);
   }
 }

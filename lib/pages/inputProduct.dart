@@ -5,9 +5,10 @@ import 'package:mainguyen/models/product/product.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/photoView.dart';
-import 'package:mainguyen/widgets/productDetails/productDetails.dart';
+import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
 class InputProduct extends StatefulWidget {
   InputProduct({Key? key, this.initOrder}) : super(key: key);
@@ -107,12 +108,12 @@ class _InputProductState extends State<InputProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BodyWidget(
-          bodyWidget: Container(
+          bodyWidget: SizedBox(
               height: screenSizeWithoutContext.height / 2,
               width: screenSizeWithoutContext.width,
               child: Column(
                 children: [
-                  AutocompleteField(
+                  AutocompleteFieldProduct(
                     options: _options,
                     label: "Tìm hàng để nhập",
                     callback: (Product productAdd) {
@@ -123,11 +124,8 @@ class _InputProductState extends State<InputProduct> {
                       }
                     },
                   ),
-
-                  // Text(_productOrder.map((e) => e.id));
-
                   for (var i = 0; i < _productOrder.length; i++) ...[
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Align(
                         alignment: Alignment.topRight,
                         child: IconButton(
@@ -251,129 +249,16 @@ class _InputProductState extends State<InputProduct> {
                           size: 24.0,
                         ),
 
-                        label: Text('Hủy'), // <-- Text
+                        label: const Text('Hủy'), // <-- Text
                       ),
                     ],
                   )
-                  // _productOrder.isNotEmpty
-                  //     ? _productOrder.map((e) => Text(e.id))
-                  //     : Text("")
                 ],
               ))),
       appBar: CustomAppBar(
           backButton: true,
-          title: Text("Nhập hàng",
-              style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+          title: TitleAppbarWidget(content: "Nhập hàng"),
           widgetActions: []),
     );
-  }
-}
-
-class AutocompleteField extends StatelessWidget {
-  AutocompleteField(
-      {super.key,
-      required List<Product> options,
-      required this.label,
-      required this.callback})
-      : _options = options;
-
-  final List<Product> _options;
-  final String label;
-  final void Function(Product) callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 80,
-        child: InputDecorator(
-            decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                label: Text(label),
-                filled: true,
-                fillColor: Colors.white,
-                prefix: const Icon(
-                  Icons.search,
-                  color: Colors.black,
-                )),
-            child: RawAutocomplete<Product>(
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                return _options.where((Product product) {
-                  return product.productName
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              fieldViewBuilder: (BuildContext context,
-                  TextEditingController textEditingController,
-                  FocusNode focusNode,
-                  VoidCallback onFieldSubmitted) {
-                return TextFormField(
-                  controller: textEditingController,
-                  focusNode: focusNode,
-                  decoration: InputDecoration(border: InputBorder.none),
-                  onFieldSubmitted: (String value) {
-                    onFieldSubmitted();
-                  },
-                );
-              },
-              onSelected: (option) => {},
-              optionsViewBuilder: (BuildContext context,
-                  AutocompleteOnSelected<Product> onSelected,
-                  Iterable<Product> options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4.0,
-                    child: Container(
-                      height: 200.0,
-                      width: 350,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final Product product = options.elementAt(index);
-                          return GestureDetector(
-                              onTap: () {
-                                // onSelected(option);
-                                callback(product);
-                                UtilsFunction().closeKeyboard();
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) =>
-                                //           ProductDetails(product: product)),
-                                // );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Card(
-                                  child: ListTile(
-                                    subtitle: Text(
-                                        "Vị trí: ${product.location}",
-                                        style: const TextStyle(fontSize: 12)),
-                                    leading: Image(
-                                        height: 50,
-                                        image:
-                                            MemoryImage(product.imageProduct)),
-                                    title: Text(
-                                      "Sản phẩm: ${product.productName}",
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ),
-                                ),
-                              )
-
-                              // ListTile(
-                              //   title: Text(option.productName),
-                              // ),
-                              );
-                        },
-                      ),
-                    ),
-                  ),
-                );
-              },
-            )));
   }
 }

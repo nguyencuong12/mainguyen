@@ -122,30 +122,24 @@ class _GuestSoldWidgetState extends State<GuestSoldWidget> {
                                             MediaQuery.of(context).size.width;
                                         return SingleChildScrollView(
                                           scrollDirection: Axis.vertical,
-                                          child: Container(
+                                          child: SizedBox(
                                               // height: height - 200,
                                               width: width - 10,
                                               child: Column(
                                                 children: [
                                                   _guestEdit.avatar != null
-                                                      ? InkWell(
-                                                          onTap: () async {
-                                                            _guestEdit.avatar =
-                                                                await UtilsWidgetClass()
-                                                                    .chooseImage(
-                                                                        ImageSource
-                                                                            .gallery);
-
-                                                            setState(() {});
-                                                          },
-                                                          child: Container(
-                                                            height: 150,
-                                                            decoration: BoxDecoration(
-                                                                image: DecorationImage(
-                                                                    image: MemoryImage(
-                                                                        _guestEdit
-                                                                            .avatar!))),
-                                                          ))
+                                                      ? UtilsWidgetClass()
+                                                          .renderImageWithChooseFunc(
+                                                              _guestEdit
+                                                                  .avatar!,
+                                                              () async => {
+                                                                    await UtilsWidgetClass()
+                                                                        .chooseImage(
+                                                                            ImageSource.gallery),
+                                                                    setState(
+                                                                        () {})
+                                                                  },
+                                                              90)
                                                       : InkWell(
                                                           onTap: () async {
                                                             _guestEdit.avatar =
@@ -155,14 +149,16 @@ class _GuestSoldWidgetState extends State<GuestSoldWidget> {
                                                                             .gallery);
                                                             setState(() {});
                                                           },
-                                                          child: Container(
-                                                            height: 150,
-                                                            decoration: const BoxDecoration(
-                                                                image: DecorationImage(
-                                                                    image: AssetImage(
-                                                                        'assets/appIcons/user.png'))),
-                                                          ),
+                                                          child: CircleAvatar(
+                                                              radius: 100,
+                                                              onBackgroundImageError:
+                                                                  (exception,
+                                                                      stackTrace) {},
+                                                              backgroundImage:
+                                                                  const AssetImage(
+                                                                      "assets/appIcons/user.png")),
                                                         ),
+                                                  SizedBox(height: 10),
                                                   RenderTextFormField(
                                                       label: "Tên khách hàng",
                                                       numberType: true,
@@ -302,14 +298,21 @@ class _GuestSoldWidgetState extends State<GuestSoldWidget> {
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
               _guestEdit.avatar != null
                   ? UtilsWidgetClass().renderImageWithChooseFunc(
                       _guestEdit.avatar!,
                       () async => {
                             await UtilsWidgetClass().navigateScreen(context,
                                 PhotoViewWidget(image: _guestEdit.avatar!))
-                          })
-                  : Text(""),
+                          },
+                      100)
+                  : CircleAvatar(
+                      radius: 100,
+                      onBackgroundImageError: (exception, stackTrace) {},
+                      backgroundImage:
+                          const AssetImage("assets/appIcons/user.png")),
+              const SizedBox(height: 20),
               Container(
                   padding: const EdgeInsets.only(
                       top: 8, bottom: 8, left: 15, right: 15),

@@ -113,7 +113,7 @@ class _OurOfStockState extends State<OurOfStock> {
                                   context,
                                   PhotoViewWidget(
                                       image: getOurOfStock()[i].imageProduct));
-                            }),
+                            }, 80),
                             SizedBox(height: 10),
                             Text(
                                 "Tên sản phẩm: ${getOurOfStock()[i].productName} ",
@@ -147,7 +147,7 @@ class _OurOfStockState extends State<OurOfStock> {
                                         ))
                                     : Container(
                                         width: 100,
-                                        height: 15,
+                                        height: 20,
                                         decoration: BoxDecoration(
                                             color: Colors.red,
                                             borderRadius:

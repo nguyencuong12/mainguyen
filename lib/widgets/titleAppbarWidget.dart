@@ -8,6 +8,7 @@ class TitleAppbarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(content,
-        style: TextStyle(fontSize: TextSize().getLabelTextSize()));
+        style: TextStyle(
+            color: Colors.black, fontSize: TextSize().getLabelTextSize()));
   }
 }
