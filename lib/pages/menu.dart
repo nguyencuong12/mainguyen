@@ -79,13 +79,6 @@ class _MenuPageState extends State<MenuPage> {
                                 UtilsWidgetClass()
                                     .navigateScreen(context, const OurOfStock())
                               }),
-                      renderItem(
-                          "assets/appIcons/out-of-stock.png", "Hàng sắp hết ",
-                          () async {
-                        Box ss = await Hive.box('secret');
-                        // await Hive.openBox('secret');
-                        // secretBox1.clear();
-                      }),
                       renderItem("assets/appIcons/lock.png", "Secrets",
                           () async {
                         Box secretBox = await Hive.openBox('secret');

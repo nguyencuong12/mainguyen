@@ -29,10 +29,9 @@ void main() async {
     ..registerAdapter(FacebookSecretAdapter())
     ..registerAdapter(ZaloSecretAdapter())
     ..registerAdapter(EmailSecretAdapter());
-  await Hive.close();
 
   await Hive.openBox("product");
-  await Hive.openBox("secret");
+  // await Hive.openBox("secret");
 
   runApp(const MyApp());
 }

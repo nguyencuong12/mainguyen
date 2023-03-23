@@ -18,9 +18,9 @@ class SecretModelAdapter extends TypeAdapter<SecretModel> {
     };
     return SecretModel(
       password: fields[0] as String,
-      facebooks: (fields[1] as List?)?.cast<FacebookSecret>(),
-      zalos: (fields[2] as List?)?.cast<ZaloSecret>(),
-      emails: (fields[3] as List?)?.cast<EmailSecret>(),
+      facebooks: (fields[1] as List).cast<FacebookSecret>(),
+      zalos: (fields[2] as List).cast<ZaloSecret>(),
+      emails: (fields[3] as List).cast<EmailSecret>(),
     );
   }
 

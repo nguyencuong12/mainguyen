@@ -7,14 +7,14 @@ import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
-class FacebookPage extends StatefulWidget {
-  const FacebookPage({super.key});
+class ZaloPage extends StatefulWidget {
+  const ZaloPage({super.key});
 
   @override
-  State<FacebookPage> createState() => _FacebookPageState();
+  State<ZaloPage> createState() => _ZaloPageState();
 }
 
-class _FacebookPageState extends State<FacebookPage> {
+class _ZaloPageState extends State<ZaloPage> {
   late SecretModel secretModel =
       SecretModel(password: "xzx", emails: [], facebooks: [], zalos: []);
   Future<void> openBox() async {
@@ -45,19 +45,19 @@ class _FacebookPageState extends State<FacebookPage> {
                   ),
                   children: [
                     // Text(secretModel.password),
-                    for (var i = 0; i < secretModel.facebooks.length; i++) ...[
+                    for (var i = 0; i < secretModel.zalos.length; i++) ...[
                       Card(
                           child: ListTile(
                         onTap: () {},
                         leading: Image(
                           image: const AssetImage(
-                            "assets/appIcons/facebook.png",
+                            "assets/appIcons/zalo.jpg",
                           ),
                           height: screenSizeWithoutContext.height / 50,
                         ),
-                        subtitle: Text(secretModel.facebooks[i].password!,
+                        subtitle: Text(secretModel.zalos[i].password,
                             style: const TextStyle(fontSize: 12)),
-                        title: Text(secretModel.facebooks[i].username!,
+                        title: Text(secretModel.zalos[i].username,
                             style: const TextStyle(fontSize: 12)),
                       )),
                     ],
@@ -77,7 +77,7 @@ class _FacebookPageState extends State<FacebookPage> {
                             context: context,
                             builder: (_) {
                               return AlertDialog(
-                                  title: Text("Tạo facebook"),
+                                  title: Text("Tạo Zalo"),
                                   content: Container(
                                     height: 300,
                                     child: SingleChildScrollView(
@@ -140,13 +140,11 @@ class _FacebookPageState extends State<FacebookPage> {
                                                   () async {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              secretModel.facebooks.add(
-                                                  FacebookSecret(
-                                                      password:
-                                                          _textUserPassword
-                                                              .text,
-                                                      username:
-                                                          _textUserName.text));
+                                              secretModel.zalos.add(ZaloSecret(
+                                                  password:
+                                                      _textUserPassword.text,
+                                                  username:
+                                                      _textUserName.text));
 
                                               await openBox();
                                               Navigator.pop(context);
@@ -162,7 +160,7 @@ class _FacebookPageState extends State<FacebookPage> {
                   ]))),
       appBar: CustomAppBar(
           backButton: true,
-          title: TitleAppbarWidget(content: "Facebook Passwords"),
+          title: TitleAppbarWidget(content: "Zalo passwords"),
           widgetActions: [
             IconButton(
                 onPressed: () {},

@@ -13,11 +13,11 @@ class SecretModel {
   @HiveField(0)
   String password;
   @HiveField(1)
-  List<FacebookSecret>? facebooks;
+  List<FacebookSecret> facebooks;
   @HiveField(2)
-  List<ZaloSecret>? zalos;
+  List<ZaloSecret> zalos;
   @HiveField(3)
-  List<EmailSecret>? emails;
+  List<EmailSecret> emails;
 
   @override
   String toString() {

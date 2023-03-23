@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/secret/secret.dart';
+import 'package:mainguyen/pages/emails.dart';
 import 'package:mainguyen/pages/facebooks.dart';
+import 'package:mainguyen/pages/zalo.dart';
 import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
@@ -27,7 +29,6 @@ class _SecretPageState extends State<SecretPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("MODEL11 ${secret.facebooks}");
   }
 
   @override
@@ -47,7 +48,7 @@ class _SecretPageState extends State<SecretPage> {
                         child: ListTile(
                       onTap: () {
                         UtilsWidgetClass()
-                            .navigateScreen(context, FacebookPage());
+                            .navigateScreen(context, const FacebookPage());
                       },
                       leading: Image(
                         image: const AssetImage(
@@ -61,7 +62,10 @@ class _SecretPageState extends State<SecretPage> {
                     )),
                     Card(
                         child: ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        UtilsWidgetClass()
+                            .navigateScreen(context, const ZaloPage());
+                      },
                       leading: Image(
                         image: const AssetImage(
                           "assets/appIcons/zalo.jpg",
@@ -74,7 +78,10 @@ class _SecretPageState extends State<SecretPage> {
                     )),
                     Card(
                         child: ListTile(
-                      onTap: () {},
+                      onTap: () {
+                        UtilsWidgetClass()
+                            .navigateScreen(context, const EmailPage());
+                      },
                       leading: Image(
                         image: const AssetImage(
                           "assets/appIcons/gmail.png",

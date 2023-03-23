@@ -7,14 +7,14 @@ import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 
-class FacebookPage extends StatefulWidget {
-  const FacebookPage({super.key});
+class EmailPage extends StatefulWidget {
+  const EmailPage({super.key});
 
   @override
-  State<FacebookPage> createState() => _FacebookPageState();
+  State<EmailPage> createState() => _EmailPageState();
 }
 
-class _FacebookPageState extends State<FacebookPage> {
+class _EmailPageState extends State<EmailPage> {
   late SecretModel secretModel =
       SecretModel(password: "xzx", emails: [], facebooks: [], zalos: []);
   Future<void> openBox() async {
@@ -45,19 +45,19 @@ class _FacebookPageState extends State<FacebookPage> {
                   ),
                   children: [
                     // Text(secretModel.password),
-                    for (var i = 0; i < secretModel.facebooks.length; i++) ...[
+                    for (var i = 0; i < secretModel.emails.length; i++) ...[
                       Card(
                           child: ListTile(
                         onTap: () {},
                         leading: Image(
                           image: const AssetImage(
-                            "assets/appIcons/facebook.png",
+                            "assets/appIcons/gmail.png",
                           ),
                           height: screenSizeWithoutContext.height / 50,
                         ),
-                        subtitle: Text(secretModel.facebooks[i].password!,
+                        subtitle: Text(secretModel.emails[i].password,
                             style: const TextStyle(fontSize: 12)),
-                        title: Text(secretModel.facebooks[i].username!,
+                        title: Text(secretModel.emails[i].username,
                             style: const TextStyle(fontSize: 12)),
                       )),
                     ],
@@ -77,7 +77,7 @@ class _FacebookPageState extends State<FacebookPage> {
                             context: context,
                             builder: (_) {
                               return AlertDialog(
-                                  title: Text("Tạo facebook"),
+                                  title: Text("Tạo Email"),
                                   content: Container(
                                     height: 300,
                                     child: SingleChildScrollView(
@@ -140,8 +140,8 @@ class _FacebookPageState extends State<FacebookPage> {
                                                   () async {
                                             if (_formKey.currentState!
                                                 .validate()) {
-                                              secretModel.facebooks.add(
-                                                  FacebookSecret(
+                                              secretModel.emails.add(
+                                                  EmailSecret(
                                                       password:
                                                           _textUserPassword
                                                               .text,
@@ -162,7 +162,7 @@ class _FacebookPageState extends State<FacebookPage> {
                   ]))),
       appBar: CustomAppBar(
           backButton: true,
-          title: TitleAppbarWidget(content: "Facebook Passwords"),
+          title: TitleAppbarWidget(content: "Email Passwords"),
           widgetActions: [
             IconButton(
                 onPressed: () {},
