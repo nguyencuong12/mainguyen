@@ -31,6 +31,7 @@ void main() async {
     ..registerAdapter(EmailSecretAdapter());
 
   await Hive.openBox("product");
+
   // await Hive.openBox("secret");
 
   runApp(const MyApp());

@@ -82,6 +82,7 @@ class _MenuPageState extends State<MenuPage> {
                       renderItem("assets/appIcons/lock.png", "Secrets",
                           () async {
                         Box secretBox = await Hive.openBox('secret');
+
                         if (secretBox.length <= 0) {
                           TextEditingController _textEditingController =
                               TextEditingController();
@@ -95,11 +96,11 @@ class _MenuPageState extends State<MenuPage> {
                                         context, () async {
                                       if (_textEditingController.text != "") {
                                         secretBox.add(SecretModel(
-                                            password:
-                                                _textEditingController.text,
-                                            emails: [],
-                                            facebooks: [],
-                                            zalos: []));
+                                          facebooks: [],
+                                          zalos: [],
+                                          emails: [],
+                                          password: _textEditingController.text,
+                                        ));
                                         UtilsWidgetClass().callToast(
                                             "Tạo mật khẩu thành công",
                                             ToastGravity.CENTER);
@@ -132,7 +133,7 @@ class _MenuPageState extends State<MenuPage> {
                         } else {
                           TextEditingController _textEditingController =
                               TextEditingController();
-
+                          SecretModel _model = secretBox.getAt(0);
                           showDialog(
                               context: context,
                               builder: (_) {
@@ -141,6 +142,7 @@ class _MenuPageState extends State<MenuPage> {
                                     UtilsWidgetClass().renderGroupActionsButton(
                                         context, () async {
                                       SecretModel _model = secretBox.getAt(0);
+                                      print("LENGTH ${_model.password}");
                                       if (_model.password ==
                                           _textEditingController.text) {
                                         Navigator.pop(context);

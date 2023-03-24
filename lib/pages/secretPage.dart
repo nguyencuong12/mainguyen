@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/models/secret/secret.dart';
 import 'package:mainguyen/pages/emails.dart';
@@ -98,7 +99,10 @@ class _SecretPageState extends State<SecretPage> {
           title: TitleAppbarWidget(content: "Riêng tư"),
           widgetActions: [
             IconButton(
-                onPressed: () {},
+                onPressed: () async {
+                  Box box = await Hive.openBox('secret');
+                  box.clear();
+                },
                 icon: Icon(color: Colors.black, Icons.edit_outlined))
           ]),
     );
