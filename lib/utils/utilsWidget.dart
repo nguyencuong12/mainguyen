@@ -12,6 +12,7 @@ import 'package:mainguyen/widgets/productDetails/productDetails.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_share/flutter_share.dart';
 
 import '../models/product/product.dart';
 
@@ -43,9 +44,22 @@ class UtilsWidgetClass {
       String fullPath = "${directory.path}/don-hang.png";
       final pathOfImage = await File(fullPath).create();
       await pathOfImage.writeAsBytes(image);
+
       XFile fileImage = XFile(fullPath);
       _files.add(fileImage);
-      await Share.shareXFiles(_files);
+
+      try {
+        // await Share.share("Hello worlds");
+        // await FlutterShare.shareFile(
+        //   title: 'Example share',
+        //   text: 'Example share text',
+        //   filePath: pathOfImage.path,
+        // );
+        await Share.shareXFiles(_files);
+        // text: 'Great picture');
+      } catch (err) {
+        print("HAVE ERROR $err");
+      }
     }
   }
 
