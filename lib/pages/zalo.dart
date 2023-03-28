@@ -156,7 +156,6 @@ class _ZaloPageState extends State<ZaloPage> {
                                               _textUserPassword.text;
                                           secretModel.zalos[i].username =
                                               _textUserName.text;
-
                                           await reAddBox();
                                           Navigator.pop(context);
                                         })

@@ -14,6 +14,7 @@ import 'package:mainguyen/pages/homePage.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:uuid/uuid.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
@@ -53,9 +54,9 @@ class _BillPageState extends State<BillPage> {
 
   Divider getDivider() {
     return const Divider(
-      height: 30,
+      height: 25,
       thickness: 1,
-      indent: 10,
+      indent: 0,
       endIndent: 0,
       color: Color.fromARGB(255, 175, 170, 170),
     );
@@ -105,7 +106,11 @@ class _BillPageState extends State<BillPage> {
             )),
           ),
           SizedBox(width: 5),
-          Text(product.productName, style: TextStyle(fontSize: 10))
+          Container(
+              width: 70,
+              child: RenderRichText(content: product.productName, maxLine: 1)),
+
+          // Text(, style: TextStyle(fontSize: 10))
         ],
       )),
       DataCell(Text(
@@ -113,9 +118,9 @@ class _BillPageState extends State<BillPage> {
           style: TextStyle(fontSize: 10))),
       DataCell(Text(UtilsFunction().formatCurrency(product.price),
           style: const TextStyle(fontSize: 10, color: Colors.blue))),
-      DataCell(Text(
-          UtilsFunction().formatCurrency(product.price * product.amount),
-          style: const TextStyle(fontSize: 10, color: Colors.blue))),
+      // DataCell(Text(
+      //     " ${UtilsFunction().formatCurrency(product.price * product.amount)}    ",
+      //     style: const TextStyle(fontSize: 10, color: Colors.blue))),
     ]);
   }
 
@@ -123,100 +128,174 @@ class _BillPageState extends State<BillPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
+          title: Text(""),
           backButton: true,
-          title: Text("Hóa đơn",
-              style: TextStyle(fontSize: TextSize().getLabelTextSize())),
+          // title: Text("Hóa đơn",
+          //     style: TextStyle(fontSize: TextSize().getLabelTextSize())),
           widgetActions: []),
       body: BodyWidget(
           bodyWidget: Container(
               width: screenSizeWithoutContext.width,
               child: Column(
                 children: [
-                  WidgetsToImage(
-                    controller: controller,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("HÓA ĐƠN BÁN HÀNG ",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 5),
-                        const Text("(MAI NGUYỄN) ",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600)),
-                        const SizedBox(height: 20),
-                        Text(
-                            "Tên khách hàng : ${widget.guestOrder.guestName ?? ""}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12)),
-                        const SizedBox(height: 5),
-                        Text(
-                            "Số điện thoại khách hàng : ${widget.guestOrder.phoneNumber ?? ""}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12)),
-                        const SizedBox(height: 5),
-                        Text(
-                            "Địa chỉ của khách hàng: ${widget.guestOrder.address ?? ""}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12)),
-                        const SizedBox(height: 5),
-                        const SizedBox(height: 5),
-                        SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: DataTable(
-                              horizontalMargin: 0,
-                              columns: const [
-                                // DataColumn(
-                                //     label: Text("Ảnh",
-                                //         style: TextStyle(fontSize: 9))),
-                                DataColumn(
-                                    label: Text("Mục",
-                                        style: TextStyle(fontSize: 9))),
-                                DataColumn(
-                                    label: Text("Số lượng",
-                                        style: TextStyle(fontSize: 9))),
-                                DataColumn(
-                                    label: Text("Giá",
-                                        style: TextStyle(fontSize: 9))),
-                                DataColumn(
-                                    label: Text("Thành tiền",
-                                        style: TextStyle(fontSize: 9))),
+                  Container(
+                    child: WidgetsToImage(
+                      controller: controller,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.green, width: 2)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Container(
+                            child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: const [
+                                //     Text("(MAI NGUYỄN) ",
+                                //         style: TextStyle(
+                                //             color: Colors.green,
+                                //             fontSize: 16,
+                                //             fontWeight: FontWeight.w500)),
+                                //     Text("HÓA ĐƠN BÁN HÀNG ",
+                                //         style: TextStyle(
+                                //             color: Colors.green,
+                                //             fontSize: 16,
+                                //             fontWeight: FontWeight.w500)),
+                                //   ],
+                                // ),
+                                Flex(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  direction: Axis.horizontal,
+                                  children: const [
+                                    Text("HÓA ĐƠN BÁN HÀNG",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Flex(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  direction: Axis.horizontal,
+                                  children: const [
+                                    Text("(MAI NGUYỄN) ",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                Flex(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  direction: Axis.horizontal,
+                                  children: [
+                                    Text(
+                                        "Ngày bán hàng: ${UtilsFunction().formatDateTime(DateTime.now())}",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                                getDivider(),
+                                const SizedBox(height: 20),
+                                Text(
+                                    "Tên khách hàng : ${widget.guestOrder.guestName ?? ""}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12)),
+                                const SizedBox(height: 5),
+                                Text(
+                                    "Số điện thoại khách hàng : ${widget.guestOrder.phoneNumber ?? ""}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12)),
+                                const SizedBox(height: 5),
+                                Text(
+                                    "Địa chỉ của khách hàng: ${widget.guestOrder.address ?? ""}",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12)),
+                                const SizedBox(height: 10),
+                                getDivider(),
+                                SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      clipBehavior: Clip.none,
+                                      horizontalMargin: 10,
+                                      // dataRowHeight: 50,
+
+                                      border:
+                                          TableBorder.all(color: Colors.black),
+                                      headingRowColor:
+                                          MaterialStateProperty.all(
+                                              Colors.amber[200]),
+
+                                      // decoration: BoxDecoration(
+                                      //   border: Border(
+                                      //       right: Divider.createBorderSide(context,
+                                      //           width: 5.0),
+                                      //       left: Divider.createBorderSide(context,
+                                      //           width: 5.0)),
+                                      //   color: Colors.red,
+                                      // ),
+                                      columns: const [
+                                        // DataColumn(
+                                        //     label: Text("Ảnh",
+                                        //         style: TextStyle(fontSize: 9))),
+                                        DataColumn(
+                                            label: Expanded(
+                                                child: Text('Mục',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 9)))),
+
+                                        DataColumn(
+                                            label: Expanded(
+                                                child: Text('Số lượng',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 9)))),
+                                        DataColumn(
+                                            label: Expanded(
+                                                child: Text('Giá',
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        fontSize: 9)))),
+                                        // DataColumn(
+                                        //     label: Expanded(
+                                        //         child: Text('Thành tiền',
+                                        //             textAlign: TextAlign.center,
+                                        //             style: TextStyle(
+                                        //                 fontSize: 9)))),
+                                      ],
+                                      rows: [
+                                        ...widget.listProductOrder
+                                            .map((e) => renderDataRow(e))
+                                      ],
+                                    )),
+                                const SizedBox(height: 20),
+                                Flex(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  direction: Axis.horizontal,
+                                  children: [
+                                    const Text("Tổng tiền đơn hàng: ",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.red)),
+                                    Text(
+                                        UtilsFunction().formatCurrency(
+                                            handleRenderTotal()),
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.red)),
+                                  ],
+                                ),
                               ],
-                              rows: [
-                                ...widget.listProductOrder
-                                    .map((e) => renderDataRow(e))
-                              ],
-                            )),
-                        SizedBox(height: 30),
-                        Flex(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          direction: Axis.horizontal,
-                          children: [
-                            const Text("Tổng tiền đơn hàng: ",
-                                style: TextStyle(fontSize: 14)),
-                            Text(
-                                UtilsFunction()
-                                    .formatCurrency(handleRenderTotal()),
-                                style: TextStyle(fontSize: 14)),
-                          ],
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 30),
-                        Flex(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          direction: Axis.horizontal,
-                          children: [
-                            Text(
-                                "Ngày bán hàng: ${UtilsFunction().formatDateTime(DateTime.now())}",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 12)),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                   // _imageBytes != null
