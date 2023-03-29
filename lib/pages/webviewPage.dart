@@ -50,6 +50,11 @@ class _WebviewPageState extends State<WebviewPage> {
             "https://scontent.fsgn2-6.fna.fbcdn.net/v/t39.30808-6/250697630_121213773664310_6140664068458620924_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=8631f5&_nc_ohc=RBPPTjA-dIwAX8TWzSa&_nc_ht=scontent.fsgn2-6.fna&oh=00_AfD3w62tbUORoeozOyU_RksK9E48y57ce3781wq9eled_w&oe=6427E5FF",
         link: "https://www.facebook.com/groups/1564942943672299/",
         title: "Vải Ninh Hiệp"),
+    GroupInterfaces(
+        image:
+            "https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-6/279215472_1134595543771103_9174275978900097474_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=8631f5&_nc_ohc=RqC5b4LEztsAX837LTc&_nc_ht=scontent.fsgn2-9.fna&oh=00_AfD3pPO0D_AE96D7NRCWeqCZ8CUb2r1hMRxqRv2MtRJeow&oe=6428FB84",
+        link: "https://www.facebook.com/groups/371300766550550/",
+        title: "Hội Mua Bán Vải Xuất Dư"),
   ];
   renderItem(String imageUrl, String title, Function onSubmit) {
     return Padding(

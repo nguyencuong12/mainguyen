@@ -45,7 +45,99 @@ class _EmailPageState extends State<EmailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BodyWidget(
-          bodyWidget: SizedBox(
+          bodyWidget: Column(
+        children: [
+          RawMaterialButton(
+            elevation: 2.0,
+            shape: const CircleBorder(),
+            fillColor: Colors.green,
+            constraints: const BoxConstraints.tightFor(
+              width: 35.0,
+              height: 35.0,
+            ),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+              size: 20.0,
+            ),
+            onPressed: () async {
+              final _formKey = GlobalKey<FormState>();
+              TextEditingController _textUserName = TextEditingController();
+              TextEditingController _textUserPassword = TextEditingController();
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return AlertDialog(
+                        title: Text("Tạo Email"),
+                        content: Container(
+                          height: 300,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Form(
+                              key: _formKey,
+                              child: Column(children: [
+                                SizedBox(
+                                    height: 80,
+                                    child: InputDecorator(
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        label: Text("Tên đăng nhập"),
+                                      ),
+                                      child: TextFormField(
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Vui lòng nhập tên đăng nhập';
+                                          }
+                                          return null;
+                                        },
+                                        controller: _textUserName,
+                                        onChanged: (value) => {},
+                                        decoration: const InputDecoration(
+                                            border: InputBorder.none),
+                                      ),
+                                    )),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                    height: 80,
+                                    child: InputDecorator(
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        label: Text("Mật khẩu"),
+                                      ),
+                                      child: TextFormField(
+                                        controller: _textUserPassword,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Vui lòng nhập mật khẩu';
+                                          }
+                                          return null;
+                                        },
+                                        onChanged: (value) => {},
+                                        decoration: const InputDecoration(
+                                            border: InputBorder.none),
+                                      ),
+                                    )),
+                                const SizedBox(height: 20),
+                                UtilsWidgetClass().renderGroupActionsButton(
+                                    context, () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    secretModel.emails.add(EmailSecret(
+                                        password: _textUserPassword.text,
+                                        username: _textUserName.text));
+
+                                    await reAddBox();
+
+                                    Navigator.pop(context);
+                                  }
+                                })
+                              ]),
+                            ),
+                          ),
+                        ));
+                  });
+            },
+          ),
+          SizedBox(
               height: screenSizeWithoutContext.height,
               width: screenSizeWithoutContext.width,
               child: GridView(
@@ -56,7 +148,9 @@ class _EmailPageState extends State<EmailPage> {
                   children: [
                     // Text(secretModel.password),
 
-                    for (var i = 0; i < secretModel.emails.length; i++) ...[
+                    for (var i = secretModel.emails.length - 1;
+                        i >= 0;
+                        i--) ...[
                       Card(
                           child: ListTile(
                         trailing:
@@ -184,114 +278,13 @@ class _EmailPageState extends State<EmailPage> {
                             style: const TextStyle(fontSize: 12)),
                       )),
                     ],
-                    FloatingActionButton(
-                      backgroundColor: Colors.green,
-                      child: const Icon(
-                        Icons.add,
-                      ),
-                      onPressed: () async {
-                        final _formKey = GlobalKey<FormState>();
-
-                        TextEditingController _textUserName =
-                            TextEditingController();
-                        TextEditingController _textUserPassword =
-                            TextEditingController();
-                        showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AlertDialog(
-                                  title: Text("Tạo Email"),
-                                  content: Container(
-                                    height: 300,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.vertical,
-                                      child: Form(
-                                        key: _formKey,
-                                        child: Column(children: [
-                                          SizedBox(
-                                              height: 80,
-                                              child: InputDecorator(
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  label: Text("Tên đăng nhập"),
-                                                ),
-                                                child: TextFormField(
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Vui lòng nhập tên đăng nhập';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  controller: _textUserName,
-                                                  onChanged: (value) => {},
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                ),
-                                              )),
-                                          const SizedBox(height: 20),
-                                          SizedBox(
-                                              height: 80,
-                                              child: InputDecorator(
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  label: Text("Mật khẩu"),
-                                                ),
-                                                child: TextFormField(
-                                                  controller: _textUserPassword,
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Vui lòng nhập mật khẩu';
-                                                    }
-                                                    return null;
-                                                  },
-                                                  onChanged: (value) => {},
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                ),
-                                              )),
-                                          const SizedBox(height: 20),
-                                          UtilsWidgetClass()
-                                              .renderGroupActionsButton(context,
-                                                  () async {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              secretModel.emails.add(
-                                                  EmailSecret(
-                                                      password:
-                                                          _textUserPassword
-                                                              .text,
-                                                      username:
-                                                          _textUserName.text));
-
-                                              await reAddBox();
-
-                                              Navigator.pop(context);
-                                            }
-                                          })
-                                        ]),
-                                      ),
-                                    ),
-                                  ));
-                            });
-                      },
-                    ),
-                  ]))),
+                  ]))
+        ],
+      )),
       appBar: CustomAppBar(
           backButton: true,
-          title: TitleAppbarWidget(content: "Email Passwords"),
-          widgetActions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(color: Colors.black, Icons.edit_outlined))
-          ]),
+          title: const TitleAppbarWidget(content: "Email Passwords"),
+          widgetActions: []),
     );
   }
 }

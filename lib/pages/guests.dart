@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/appbar/appbar.dart';
 import 'package:mainguyen/dialogs/dialogs.dart';
@@ -54,13 +55,6 @@ class _GuestPageState extends State<GuestPage> {
                               await UtilsWidgetClass().navigateScreen(
                                   context, GuestSoldWidget(guestInfo: guest));
                               await _openBox();
-
-                              // setState(() {});
-                              // _guestOrder = GuestOrder(
-                              //     id: guest.guestID,
-                              //     guestName: guest.guestName,
-                              //     phoneNumber: guest.guestPhoneNumber,
-                              //     address: guest.guestAddress);
                             },
                             callbackSubmit: (String value) {
                               // setState(() {});
@@ -68,6 +62,7 @@ class _GuestPageState extends State<GuestPage> {
                             },
                             label: 'Tìm khách hàng',
                           )),
+                      const SizedBox(height: 10),
                       for (var i = _guestList.length - 1; i >= 0; i--) ...[
                         Card(
                             child: Padding(
@@ -118,18 +113,6 @@ class _GuestPageState extends State<GuestPage> {
                           ),
                         ))
                       ],
-                      const SizedBox(height: 20),
-                      FloatingActionButton(
-                        backgroundColor: Colors.green,
-                        child: const Icon(
-                          Icons.add,
-                        ),
-                        onPressed: () async => {
-                          await UtilsWidgetClass()
-                              .navigateScreen(context, CreateGuest()),
-                          await _openBox(),
-                        },
-                      ),
                     ],
                   )
                 : Column(
@@ -153,7 +136,17 @@ class _GuestPageState extends State<GuestPage> {
         appBar: CustomAppBar(
           backButton: true,
           title: TitleAppbarWidget(content: "Khách hàng"),
-          widgetActions: [],
+          widgetActions: [
+            IconButton(
+                onPressed: () async {
+                  await UtilsWidgetClass()
+                      .navigateScreen(context, const CreateGuest());
+                  await UtilsWidgetClass().callToast(
+                      "Tạo khách hàng thành công", ToastGravity.CENTER);
+                  await _openBox();
+                },
+                icon: const Icon(Icons.add, color: Colors.green))
+          ],
         ));
   }
 }
