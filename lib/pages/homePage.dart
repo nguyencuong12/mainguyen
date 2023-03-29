@@ -17,6 +17,7 @@ import 'package:mainguyen/pages/guests.dart';
 import 'package:mainguyen/pages/inputProduct.dart';
 import 'package:mainguyen/pages/menu.dart';
 import 'package:mainguyen/pages/newProduct.dart';
+import 'package:mainguyen/pages/orderDrink.dart';
 import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/secretPage.dart';
 import 'package:mainguyen/pages/sell.dart';
@@ -437,9 +438,8 @@ class _HomePageState extends State<HomePage> {
                       "Phiếu mua nước ngọt",
                       "assets/appIcons/bill.png",
                       () async => {
-                            // await UtilsWidgetClass()
-                            //     .navigateScreen(context, const NewProduct()),
-                            // await _openBox(),
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const OrderDrink()),
                           }),
                 ],
               ),
