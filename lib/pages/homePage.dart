@@ -21,6 +21,7 @@ import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/secretPage.dart';
 import 'package:mainguyen/pages/sell.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
+import 'package:mainguyen/pages/webviewPage.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/utilsWidget.dart';
@@ -298,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                       "assets/appIcons/cotton.png",
                       () async => {
                             await UtilsWidgetClass()
-                                .navigateScreen(context, const NewProduct()),
+                                .navigateScreen(context, const WebviewPage()),
                             await _openBox(),
                           }),
                   renderProductBox(
