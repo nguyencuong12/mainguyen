@@ -9,6 +9,7 @@ import 'package:mainguyen/pages/guests.dart';
 import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/secretPage.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
+import 'package:mainguyen/pages/webviewPage.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
 import 'package:mainguyen/utils/utilsWidget.dart';
@@ -184,6 +185,13 @@ class _MenuPageState extends State<MenuPage> {
                           //     .navigateScreen(context, const OurOfStock());
                         }
                       }),
+                      renderItem(
+                          "assets/appIcons/cotton.png",
+                          "Nhóm mua vải ",
+                          () => {
+                                UtilsWidgetClass().navigateScreen(
+                                    context, const WebviewPage())
+                              }),
                     ]))
 
             // Generate 100 widgets that display their index in the List.

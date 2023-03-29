@@ -113,35 +113,58 @@ class _AllProductsState extends State<AllProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _products.isNotEmpty
-            ? GridView(
-                primary: false,
-                padding: const EdgeInsets.all(20),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: (1 / .5),
-                ),
-                children: [
-                  ..._products.map(
-                    (product) => renderItem(product, () async {
-                      await UtilsWidgetClass().navigateScreen(
-                          context, ProductDetails(product: product));
-                      await _openBox();
-                      // await _productBox();
-                    }),
+            ? BodyWidget(
+                bodyWidget: SingleChildScrollView(
+                  child: Column(children: [
+                    Padding(
+                      padding: EdgeInsets.all(
+                        10.0,
+                      ),
+                      child: AutocompleteFieldProduct(
+                          label: "Tìm kiếm sản phẩm",
+                          callback: (Product product) async {
+                            await UtilsWidgetClass().navigateScreen(
+                                context, ProductDetails(product: product));
+                          },
+                          options: _products),
+                    ),
+                    SizedBox(
+                      height: screenSizeWithoutContext.height / 4,
+                      child: GridView(
+                        primary: false,
+                        padding: const EdgeInsets.all(20),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 5,
+                          childAspectRatio: (1 / .5),
+                        ),
+                        children: [
+                          ..._products.map(
+                            (product) => renderItem(product, () async {
+                              await UtilsWidgetClass().navigateScreen(
+                                  context, ProductDetails(product: product));
+                              await _openBox();
+                              // await _productBox();
+                            }),
 
-                    // renderProductBox(
-                    //     product.productName,
-                    //     product.imageProduct,
-                    //     () => {
-                    //           UtilsWidgetClass().navigateScreen(
-                    //               context, ProductDetails(product: product))
-                    //         },
-                    //     () async => {
-                    //           _productBox.deleteAt(_products.indexOf(product)),
-                    //           _openBox()
-                    //         })
-                  )
-                ],
+                            // renderProductBox(
+                            //     product.productName,
+                            //     product.imageProduct,
+                            //     () => {
+                            //           UtilsWidgetClass().navigateScreen(
+                            //               context, ProductDetails(product: product))
+                            //         },
+                            //     () async => {
+                            //           _productBox.deleteAt(_products.indexOf(product)),
+                            //           _openBox()
+                            //         })
+                          )
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
               )
             : ImageEmpty(title: "Hiện chưa có sản phẩm nào"),
         appBar: CustomAppBar(

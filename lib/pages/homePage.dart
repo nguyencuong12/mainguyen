@@ -95,24 +95,6 @@ class _HomePageState extends State<HomePage> {
     // ignore: prefer_const_constructors
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // appBar: PreferredSize(
-      //     preferredSize: Size.fromHeight(100.0),
-      //     child: Container(
-      //       padding: EdgeInsets.only(top: 20),
-      //       child: CustomAppBar(
-      //         title:
-      //         AutocompleteField(
-      //           options: _options,
-      //           label: "11",
-      //         ),
-      //         backButton: false,
-      //         widgetActions: [],
-      //       ),
-      //     )),
-      // AutocompleteField(
-      //   options: _options,
-      //   label: "11",
-      // ),
       body: BodyWidget(
         bodyWidget: Column(
           children: [
@@ -128,10 +110,10 @@ class _HomePageState extends State<HomePage> {
                   },
                 )),
             SizedBox(
-              height: 600,
+              height: 500,
               child: GridView.count(
                 primary: false,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(40),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 20,
                 crossAxisCount: 2,
@@ -150,6 +132,7 @@ class _HomePageState extends State<HomePage> {
                       () async => {
                             await UtilsWidgetClass()
                                 .navigateScreen(context, const SaleProducts()),
+                            await _openBox(),
                           }),
                   renderProductBox(
                       "Nhập hàng",
@@ -192,7 +175,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorsInApp().getPrimaryColor(),
         child: Icon(

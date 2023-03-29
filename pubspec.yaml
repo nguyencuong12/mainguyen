@@ -50,6 +50,8 @@ dependencies:
   google_fonts: ^4.0.3
   dotted_border: ^2.0.0+3
   flutter_share: ^2.0.0
+  webview_flutter: ^4.0.7
+  webview_flutter_android: ^3.4.3
 
 dev_dependencies:
   flutter_test:

@@ -393,11 +393,11 @@ class renderRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text("${title}:", style: Theme.of(context).textTheme.bodyMedium!),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           RenderRichText(content: content, maxLine: 2),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           action != null
               ? IconButton(
                   onPressed: () async {
