@@ -141,8 +141,7 @@ class _GuestPageState extends State<GuestPage> {
                 onPressed: () async {
                   await UtilsWidgetClass()
                       .navigateScreen(context, const CreateGuest());
-                  await UtilsWidgetClass().callToast(
-                      "Tạo khách hàng thành công", ToastGravity.CENTER);
+
                   await _openBox();
                 },
                 icon: const Icon(Icons.add, color: Colors.green))

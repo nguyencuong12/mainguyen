@@ -389,23 +389,25 @@ class renderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8, bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 10),
-          Text("${title}:", style: Theme.of(context).textTheme.bodyMedium!),
-          const SizedBox(width: 10),
-          RenderRichText(content: content, maxLine: 2),
-          const SizedBox(width: 10),
-          action != null
-              ? IconButton(
-                  onPressed: () async {
-                    await FlutterPhoneDirectCaller.callNumber(content);
-                  },
-                  icon: Icon(Icons.phone, color: Colors.blue))
-              : Text("")
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 10),
+            RenderRichText(content: title, maxLine: 1),
+            const SizedBox(width: 10),
+            RenderRichText(content: content, maxLine: 1),
+            action != null
+                ? IconButton(
+                    onPressed: () async {
+                      await FlutterPhoneDirectCaller.callNumber(content);
+                    },
+                    icon: Icon(Icons.phone, color: Colors.blue))
+                : Text("")
+          ],
+        ),
       ),
     );
   }

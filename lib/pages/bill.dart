@@ -107,7 +107,7 @@ class _BillPageState extends State<BillPage> {
           ),
           SizedBox(width: 5),
           Container(
-              width: 70,
+              width: 60,
               child: RenderRichText(content: product.productName, maxLine: 1)),
 
           // Text(, style: TextStyle(fontSize: 10))
@@ -145,7 +145,7 @@ class _BillPageState extends State<BillPage> {
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green, width: 2)),
                         child: Padding(
-                          padding: const EdgeInsets.all(15.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Container(
                             child: Column(
                               // mainAxisAlignment: MainAxisAlignment.start,
@@ -220,62 +220,58 @@ class _BillPageState extends State<BillPage> {
                                     style: TextStyle(fontSize: 12)),
                                 const SizedBox(height: 10),
                                 getDivider(),
-                                SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      clipBehavior: Clip.none,
-                                      horizontalMargin: 10,
-                                      // dataRowHeight: 50,
+                                DataTable(
+                                  clipBehavior: Clip.none,
+                                  horizontalMargin: 10,
+                                  // dataRowHeight: 50,
 
-                                      border:
-                                          TableBorder.all(color: Colors.black),
-                                      headingRowColor:
-                                          MaterialStateProperty.all(
-                                              Colors.amber[200]),
+                                  border: TableBorder.all(color: Colors.black),
+                                  headingRowColor: MaterialStateProperty.all(
+                                      Colors.amber[200]),
 
-                                      // decoration: BoxDecoration(
-                                      //   border: Border(
-                                      //       right: Divider.createBorderSide(context,
-                                      //           width: 5.0),
-                                      //       left: Divider.createBorderSide(context,
-                                      //           width: 5.0)),
-                                      //   color: Colors.red,
-                                      // ),
-                                      columns: const [
-                                        // DataColumn(
-                                        //     label: Text("Ảnh",
-                                        //         style: TextStyle(fontSize: 9))),
-                                        DataColumn(
-                                            label: Expanded(
-                                                child: Text('Mục',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize: 9)))),
+                                  // decoration: BoxDecoration(
+                                  //   border: Border(
+                                  //       right: Divider.createBorderSide(context,
+                                  //           width: 5.0),
+                                  //       left: Divider.createBorderSide(context,
+                                  //           width: 5.0)),
+                                  //   color: Colors.red,
+                                  // ),
+                                  columns: const [
+                                    // DataColumn(
+                                    //     label: Text("Ảnh",
+                                    //         style: TextStyle(fontSize: 9))),
+                                    DataColumn(
+                                        label: Expanded(
+                                            child: Text('Mục',
+                                                textAlign: TextAlign.center,
+                                                style:
+                                                    TextStyle(fontSize: 9)))),
 
-                                        DataColumn(
-                                            label: Expanded(
-                                                child: Text('Số lượng',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize: 9)))),
-                                        DataColumn(
-                                            label: Expanded(
-                                                child: Text('Giá',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        fontSize: 9)))),
-                                        // DataColumn(
-                                        //     label: Expanded(
-                                        //         child: Text('Thành tiền',
-                                        //             textAlign: TextAlign.center,
-                                        //             style: TextStyle(
-                                        //                 fontSize: 9)))),
-                                      ],
-                                      rows: [
-                                        ...widget.listProductOrder
-                                            .map((e) => renderDataRow(e))
-                                      ],
-                                    )),
+                                    DataColumn(
+                                        label: Expanded(
+                                            child: Text('Số lượng',
+                                                textAlign: TextAlign.center,
+                                                style:
+                                                    TextStyle(fontSize: 9)))),
+                                    DataColumn(
+                                        label: Expanded(
+                                            child: Text('Giá',
+                                                textAlign: TextAlign.center,
+                                                style:
+                                                    TextStyle(fontSize: 9)))),
+                                    // DataColumn(
+                                    //     label: Expanded(
+                                    //         child: Text('Thành tiền',
+                                    //             textAlign: TextAlign.center,
+                                    //             style: TextStyle(
+                                    //                 fontSize: 9)))),
+                                  ],
+                                  rows: [
+                                    ...widget.listProductOrder
+                                        .map((e) => renderDataRow(e))
+                                  ],
+                                ),
                                 const SizedBox(height: 20),
                                 Flex(
                                   mainAxisAlignment: MainAxisAlignment.center,

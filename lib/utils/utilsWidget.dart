@@ -11,6 +11,8 @@ import 'package:mainguyen/utils/utilsFunction.dart';
 import 'package:mainguyen/widgets/productDetails/productDetails.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_share/flutter_share.dart';
 
@@ -39,27 +41,14 @@ class UtilsWidgetClass {
 
   copyImage(Uint8List image) async {
     if (image.isNotEmpty) {
-      List<XFile> _files = [];
-      final directory = await getApplicationDocumentsDirectory();
-      String fullPath = "${directory.path}/don-hang.png";
-      final pathOfImage = await File(fullPath).create();
-      await pathOfImage.writeAsBytes(image);
-
-      XFile fileImage = XFile(fullPath);
-      _files.add(fileImage);
-
-      try {
-        // await Share.share("Hello worlds");
-        // await FlutterShare.shareFile(
-        //   title: 'Example share',
-        //   text: 'Example share text',
-        //   filePath: pathOfImage.path,
-        // );
-        await Share.shareXFiles(_files);
-        // text: 'Great picture');
-      } catch (err) {
-        print("HAVE ERROR $err");
+      final directory = await getTemporaryDirectory();
+      final fullPath = "${directory.path}/image.jpg";
+      var status = await Permission.storage.status;
+      if (status.isDenied) {
+        await Permission.storage.request();
       }
+      File(fullPath).writeAsBytesSync(image);
+      Share.shareFiles([fullPath], text: "ss");
     }
   }
 

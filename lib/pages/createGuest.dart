@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mainguyen/appbar/appbar.dart';
@@ -8,6 +9,7 @@ import 'package:mainguyen/classes/guest/guestOrderModelClass.dart';
 import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/textSize.dart';
+import 'package:mainguyen/utils/utilsWidget.dart';
 import 'package:mainguyen/widgets/bodyWidget.dart';
 import 'package:mainguyen/widgets/titleAppbarWidget.dart';
 import 'package:selection_menu/selection_menu.dart';
@@ -168,6 +170,9 @@ class _CreateGuestState extends State<CreateGuest> {
                                   avatar: _guestOrder.avatar,
                                   guestAddress: _guestOrder.address));
                             }
+                            await UtilsWidgetClass().callToast(
+                                "Tạo khách hàng thành công",
+                                ToastGravity.CENTER);
                             Navigator.pop(context);
                           },
                           icon: Icon(Icons.next_plan),

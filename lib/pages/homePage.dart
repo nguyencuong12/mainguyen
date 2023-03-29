@@ -241,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisCount: 4,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: (1 / 1.1),
+                  childAspectRatio: (1 / 1.3),
                 ),
                 children: <Widget>[
                   renderProductBox(
