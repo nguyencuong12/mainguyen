@@ -19,6 +19,7 @@ class _WebViewCustomState extends State<WebViewCustom> {
 
   void initState() {
     super.initState();
+
     // #docregion platform_features
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -30,6 +31,11 @@ class _WebViewCustomState extends State<WebViewCustom> {
           },
           onPageStarted: (String url) {},
           onPageFinished: (String url) {
+            _controller.runJavaScript(
+                "document.getElementsByClassName('m fixed-container top')[0].style.display='none'");
+            _controller.runJavaScript(
+                "document.getElementsByTagName('footer')[0].style.display='none'");
+
             setState(() {
               loading = false;
             });

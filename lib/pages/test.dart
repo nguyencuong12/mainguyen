@@ -116,7 +116,6 @@ class _TestState extends State<Test> {
                                             data.docs[index]);
                                     ss1.image = convertUint8ListToString(test);
                                     ss1.name = "NGUYEN NGOC CUONG";
-
                                     _userCollection
                                         .doc(data.docs[index].id)
                                         .update(ss1.toJson()
