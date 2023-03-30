@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
@@ -8,13 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mainguyen/models/guest/guestModel.dart';
 import 'package:mainguyen/utils/screenSize.dart';
 import 'package:mainguyen/utils/utilsFunction.dart';
-import 'package:mainguyen/widgets/productDetails/productDetails.dart';
-import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:share_extend/share_extend.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:flutter_share/flutter_share.dart';
+// import 'package:share_plus/share_plus.dart';
 
 import '../models/product/product.dart';
 
@@ -42,13 +36,9 @@ class UtilsWidgetClass {
   copyImage(Uint8List image) async {
     if (image.isNotEmpty) {
       final directory = await getTemporaryDirectory();
-      final fullPath = "${directory.path}/image.jpg";
-      var status = await Permission.storage.status;
-      if (status.isDenied) {
-        await Permission.storage.request();
-      }
+      final fullPath = "${directory.path}/image.webp";
       File(fullPath).writeAsBytesSync(image);
-      Share.shareFiles([fullPath], text: "ss");
+      // Share.shareFiles([fullPath], text: "This is image for testing");
     }
   }
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "311248022079",
+    "project_id": "quanlykhohang-1d22c",
+    "storage_bucket": "quanlykhohang-1d22c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311248022079:android:ba8fd25b000efe9df0268a",
+        "android_client_info": {
+          "package_name": "com.example.mainguyen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "311248022079-uf922fpqh0evkd21i4rmj7pc1rs3t4ja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQvPhUYUUk4S7k0Y-yVbcPY6Db1Nbu568"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "311248022079-uf922fpqh0evkd21i4rmj7pc1rs3t4ja.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

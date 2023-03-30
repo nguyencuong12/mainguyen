@@ -22,6 +22,7 @@ import 'package:mainguyen/pages/ourOfStock.dart';
 import 'package:mainguyen/pages/secretPage.dart';
 import 'package:mainguyen/pages/sell.dart';
 import 'package:mainguyen/pages/soldOrdered.dart';
+import 'package:mainguyen/pages/test.dart';
 import 'package:mainguyen/pages/webviewPage.dart';
 import 'package:mainguyen/utils/colorApps.dart';
 import 'package:mainguyen/utils/screenSize.dart';
@@ -430,6 +431,8 @@ class _HomePageState extends State<HomePage> {
                       "Sổ nợ ",
                       "assets/appIcons/money-bag.png",
                       () async => {
+                            await UtilsWidgetClass()
+                                .navigateScreen(context, const Test()),
                             // await UtilsWidgetClass()
                             //     .navigateScreen(context, const NewProduct()),
                             // await _openBox(),

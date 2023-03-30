@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:mainguyen/classes/sell/sellProductClass.dart';
@@ -11,10 +12,10 @@ import 'package:mainguyen/models/soldOrdered/soldOrdered.dart';
 import 'package:mainguyen/pages/homePage.dart';
 import 'package:path_provider/path_provider.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // var path = Directory.current.path;
-  // ignore: unused_local_variable
+
+  await Firebase.initializeApp();
   var documentsDirectory = await getApplicationDocumentsDirectory();
   Hive
     ..init(documentsDirectory.path)
